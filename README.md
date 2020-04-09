@@ -1,2 +1,0 @@
-# magcho
-magchoのポートフォリオ
