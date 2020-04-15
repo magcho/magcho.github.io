@@ -108,26 +108,20 @@ export default class Cavnas {
             THREE.AnimationClip.findByName(animations, "Program")
           )
         };
-        this.penguinAnimationClips["electro"].reset().play();
         this.animationMixers.push(animeMixer);
         this.scene.add(obj);
 
         resolve();
       });
     })
-      .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb", []))
-      .then(() =>
-        this.loadSingleStage("program", "./model/stage_program.glb", [])
-      )
-      .then(() =>
-        this.loadSingleStage("electro", "./model/stage_electro.glb", [
-          "electro"
-        ])
-      )
+      .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb"))
+      .then(() => this.loadSingleStage("program", "./model/stage_program.glb"))
+      .then(() => this.loadSingleStage("electro", "./model/stage_electro.glb"))
       .then(() => {
         return new Promise(resolve => {
+          // default animation
           this.currentSeneName = "idle";
-          this.playScene("idle");
+          this.penguinAnimationClips["idle"].play();
           resolve();
         });
       })
@@ -137,12 +131,20 @@ export default class Cavnas {
       });
   }
 
-  loadSingleStage(name, path, animations): Promise<any> {
+  loadSingleStage(name: string, path: string): Promise<any> {
     return new Promise(resolve => {
       this.loader.load(path, gltf => {
-        this.stageScenes[name] = gltf.scene;
+        const obj = gltf.scene;
+        this.stageScenes[name] = obj;
+
         if (gltf.animations.length > 0) {
-          this.stageAnimationClips[name] = gltf.animations;
+          const animations = gltf.animations;
+          const animeMixer = new THREE.AnimationMixer(obj);
+
+          this.stageAnimationClips["electro"] = animeMixer.clipAction(
+            THREE.AnimationClip.findByName(animations, "Electro_solid")
+          );
+          this.animationMixers.push(animeMixer);
         }
         resolve();
       });
@@ -158,7 +160,6 @@ export default class Cavnas {
           gltf => {
             const obj = gltf;
             this.stageScenes[asset.name] = obj.scene;
-            // const animations = obj.animations;
             resolve();
           },
           () => {},
@@ -170,23 +171,40 @@ export default class Cavnas {
     });
   }
 
-  playScene(nextSceneName) {
-    if (nextSceneName === "idle") {
-      return false;
-    }
-    this.scene.add(this.stageScenes);
-    this.penguinAnimationClips[nextSceneName].reset().play();
+  playScene(nextSceneName: string, duration = 0.5) {
+    return new Promise(resolve => {
+      if (nextSceneName !== "idle") {
+        this.scene.add(this.stageScenes[nextSceneName]);
+
+        if (nextSceneName === "electro") {
+          this.stageAnimationClips["electro"].reset().play();
+        }
+      }
+      this.penguinAnimationClips[nextSceneName]
+        .reset()
+        .fadeIn(duration)
+        .play();
+      this.currentSeneName = nextSceneName;
+      setTimeout(resolve, duration);
+    });
   }
 
-  stopAnimation(animationName) {
+  stopScene(animationName: string, duration: number = 0.5) {
     return new Promise(resolve => {
-      this.penguinAnimationClips[animationName].stop();
+      if (animationName !== "idle") {
+        this.scene.remove(this.stageScenes[animationName]);
+      }
+      this.penguinAnimationClips[animationName].fadeOut(duration);
       resolve();
     });
   }
 
-  changeScene(sceneName) {
-    this.scene.remove(this.scene[this.currentSeneName]);
+  async xFadeScene(sceneName: string) {
+    if (sceneName === this.currentSeneName) {
+      return false;
+    }
+    this.stopScene(this.currentSeneName);
+    await this.playScene(sceneName);
   }
 
   rendering() {
