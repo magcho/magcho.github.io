@@ -1,0 +1,12 @@
+body
+  margin 0
+
+
+  #background_container
+    position fixed
+    color green
+
+  #contents_contaier
+    position relative
+    
+      
