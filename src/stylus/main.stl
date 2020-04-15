@@ -4,9 +4,15 @@ body
 
   #background_container
     position fixed
-    color green
 
+    canvas
+      background-color #aad6e6
+   
+    
   #contents_contaier
     position relative
+
+    #controls
+      float right
     
       

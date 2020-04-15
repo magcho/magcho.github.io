@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { GreaterEqualStencilFunc } from "three";
+import Stats from "three/examples/jsm/libs/stats.module";
+import Easing from "../Easing";
 
 export default class Cavnas {
   private renderer: THREE.WebGLRenderer;
@@ -9,6 +10,7 @@ export default class Cavnas {
   private scene: THREE.Scene;
   private control: OrbitControls;
   private loader: GLTFLoader;
+  private stats: Stats;
 
   private stageScenes;
   private stageAnimationClips;
@@ -18,8 +20,10 @@ export default class Cavnas {
   private stageAssets;
   private animationMixers: THREE.AnimationMixer[];
   private clock: THREE.Clock;
+  private penguinScene: THREE.Group;
 
   private currentSeneName: string;
+  private animateStack: Easing[];
 
   constructor() {
     this.stageAssets = [
@@ -45,10 +49,16 @@ export default class Cavnas {
 
     this.windowScroll = 0;
 
-    this.renderer = new THREE.WebGLRenderer();
+    this.animateStack = [];
+
+    // renderer
+    this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setClearColor(0xffffff, 1);
+    this.renderer.setClearColor(0x000000, 0);
+    this.renderer.clippingPlanes.push(
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+    );
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     document
       .getElementById("background_container")
@@ -62,14 +72,14 @@ export default class Cavnas {
       100
     );
     this.camera.position.set(0, 2, 2);
-    // this.resizeCamera();
 
     // init scene
     this.scene = new THREE.Scene();
 
     // init control
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
-    this.control.autoRotate = true;
+    this.control.autoRotate = false;
+    this.control.maxAzimuthAngle;
     this.control.target.set(0, 0.5, 0);
 
     // init light
@@ -109,7 +119,8 @@ export default class Cavnas {
           )
         };
         this.animationMixers.push(animeMixer);
-        this.scene.add(obj);
+        this.penguinScene = obj;
+        this.scene.add(this.penguinScene);
 
         resolve();
       });
@@ -127,6 +138,9 @@ export default class Cavnas {
       })
       .then(() => {
         this.clock = new THREE.Clock();
+        this.stats = Stats();
+        this.stats.showPanel(0);
+        document.body.appendChild(this.stats.dom);
         this.rendering();
       });
   }
@@ -174,7 +188,9 @@ export default class Cavnas {
   playScene(nextSceneName: string, duration = 0.5) {
     return new Promise(resolve => {
       if (nextSceneName !== "idle") {
+        this.stageScenes[nextSceneName].position.y = -1.1;
         this.scene.add(this.stageScenes[nextSceneName]);
+        this.moveSceneAnimationCreate(nextSceneName, "up", 500);
 
         if (nextSceneName === "electro") {
           this.stageAnimationClips["electro"].reset().play();
@@ -208,9 +224,7 @@ export default class Cavnas {
   }
 
   rendering() {
-    requestAnimationFrame(() => {
-      this.rendering();
-    });
+    this.stats.begin();
     if (this.animationMixers && this.animationMixers.length > 0) {
       const delta = this.clock.getDelta();
       for (let i = 0; i < this.animationMixers.length; i++) {
@@ -219,8 +233,52 @@ export default class Cavnas {
         }
       }
     }
+    this.moveSceneAnimationUpdate();
 
     this.renderer.render(this.scene, this.camera);
     this.control.update();
+    this.stats.end();
+
+    requestAnimationFrame(() => {
+      this.rendering();
+    });
+  }
+
+  moveSceneAnimationCreate(
+    sceneName: string,
+    direction: string,
+    duration: number
+  ) {
+    if (sceneName === "penguin") {
+      this.animateStack.push(
+        new Easing(this.penguinScene, sceneName, direction, duration)
+      );
+    } else {
+      this.animateStack.push(
+        new Easing(this.stageScenes[sceneName], sceneName, direction, duration)
+      );
+    }
+  }
+
+  moveSceneAnimationUpdate() {
+    if (this.animateStack.length === 0) {
+      return;
+    }
+    this.animateStack = this.animateStack.filter(anime => {
+      const t = anime.update();
+      console.log(t);
+      return t;
+    });
+  }
+
+  windowResize() {
+    this.windowSize.h = window.innerHeight;
+    this.windowSize.w = window.innerWidth;
+
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(this.windowSize.w, this.windowSize.h);
+
+    this.camera.aspect = this.windowSize.w / this.windowSize.h;
+    this.camera.updateProjectionMatrix();
   }
 }

@@ -8,6 +8,7 @@ class MainPage {
   }
 
   initEvent() {
+    // click event
     document.getElementById("idle").addEventListener("click", () => {
       this.canvas.xFadeScene("idle");
     });
@@ -19,6 +20,11 @@ class MainPage {
     });
     document.getElementById("electro").addEventListener("click", () => {
       this.canvas.xFadeScene("electro");
+    });
+
+    //window resize
+    window.addEventListener("resize", () => {
+      this.canvas.windowResize();
     });
   }
 }
