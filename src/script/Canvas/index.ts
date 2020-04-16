@@ -9,7 +9,6 @@ export default class Cavnas {
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
   private control: OrbitControls;
-  private loader: GLTFLoader;
   private stats: Stats;
 
   private stageScenes;
@@ -98,9 +97,12 @@ export default class Cavnas {
     this.stageAnimationClips = {};
     this.animationMixers = [];
     this.penguinState = 0;
-    this.loader = new GLTFLoader();
+
     new Promise(resolve => {
-      const gtlfLoader = new GLTFLoader();
+      const loadingManager = new THREE.LoadingManager();
+      const gtlfLoader = new GLTFLoader(loadingManager);
+      loadingManager.onLoad = resolve;
+
       gtlfLoader.load("./model/penguin.glb", gltf => {
         const obj = gltf.scene;
         const animations = gltf.animations;
@@ -126,7 +128,7 @@ export default class Cavnas {
         this.scene.add(this.penguinScene);
         this.penguinState = 1;
 
-        resolve();
+        // resolve();
       });
     })
       .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb"))
@@ -137,21 +139,37 @@ export default class Cavnas {
           // default animation
           this.currentSeneName = "idle";
           this.penguinAnimationClips["idle"].play();
+          console.log(1);
           resolve();
         });
       })
       .then(() => {
-        this.clock = new THREE.Clock();
-        this.stats = Stats();
-        this.stats.showPanel(0);
-        document.body.appendChild(this.stats.dom);
-        this.rendering();
+        return new Promise(resolve => {
+          this.clock = new THREE.Clock();
+          this.stats = Stats();
+          this.stats.showPanel(0);
+          document.body.appendChild(this.stats.dom);
+          this.rendering();
+          console.log(3);
+          resolve();
+        });
+      })
+      .then(() => {
+        return new Promise(resolve => {
+          this.moveSceneAnimationCreate("penguin", "up", 500);
+          console.log(2);
+          resolve();
+        });
       });
   }
 
   loadSingleStage(name: string, path: string): Promise<any> {
     return new Promise(resolve => {
-      this.loader.load(path, gltf => {
+      const loadingManager = new THREE.LoadingManager();
+      const loader = new GLTFLoader(loadingManager);
+      loadingManager.onLoad = resolve;
+
+      loader.load(path, gltf => {
         const obj = gltf.scene;
         this.stageScenes[name] = obj;
 
@@ -164,27 +182,7 @@ export default class Cavnas {
           );
           this.animationMixers.push(animeMixer);
         }
-        resolve();
-      });
-    });
-  }
-
-  loadStage(assets: any[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      assets.map(asset => {
-        const loader = new GLTFLoader();
-        loader.load(
-          asset.path,
-          gltf => {
-            const obj = gltf;
-            this.stageScenes[asset.name] = obj.scene;
-            resolve();
-          },
-          () => {},
-          error => {
-            reject(error);
-          }
-        );
+        // resolve();
       });
     });
   }
