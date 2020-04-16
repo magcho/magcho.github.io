@@ -4,7 +4,7 @@ class MainPage {
   private canvas: Canvas;
   constructor() {
     this.canvas = new Canvas();
-    this.initEvent();
+    // this.initEvent();
   }
 
   initEvent() {

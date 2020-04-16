@@ -46,6 +46,8 @@ export default class Cavnas {
 
     this.windowSize.w = window.innerWidth;
     this.windowSize.h = window.innerHeight;
+    // this.windowSize.w = document.getElementById("page1").clientWidth;
+    // this.windowSize.h = document.getElementById("page1").clientHeight;
 
     this.windowScroll = 0;
 
@@ -61,7 +63,7 @@ export default class Cavnas {
     );
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     document
-      .getElementById("background_container")
+      .getElementById("three_container")
       .appendChild(this.renderer.domElement);
 
     // init camera
@@ -71,7 +73,7 @@ export default class Cavnas {
       0.1,
       100
     );
-    this.camera.position.set(0, 2, 2);
+    this.camera.position.set(1.5, 1.5, 1.5);
 
     // init scene
     this.scene = new THREE.Scene();
@@ -79,7 +81,8 @@ export default class Cavnas {
     // init control
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
     this.control.autoRotate = false;
-    this.control.maxAzimuthAngle;
+    this.control.enableRotate = false;
+    this.control.dispose();
     this.control.target.set(0, 0.5, 0);
 
     // init light
@@ -150,14 +153,14 @@ export default class Cavnas {
           this.stats.showPanel(0);
           document.body.appendChild(this.stats.dom);
           this.rendering();
-          console.log(3);
+          console.log(2);
           resolve();
         });
       })
       .then(() => {
         return new Promise(resolve => {
           this.moveSceneAnimationCreate("penguin", "up", 500);
-          console.log(2);
+          console.log(3);
           resolve();
         });
       });
@@ -281,6 +284,8 @@ export default class Cavnas {
   windowResize() {
     this.windowSize.h = window.innerHeight;
     this.windowSize.w = window.innerWidth;
+    // this.windowSize.w = document.getElementById("page1").clientWidth;
+    // this.windowSize.h = document.getElementById("page1").clientHeight;
 
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);
