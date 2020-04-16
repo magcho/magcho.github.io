@@ -208,7 +208,8 @@ export default class Cavnas {
   stopScene(animationName: string, duration: number = 0.5) {
     return new Promise(resolve => {
       if (animationName !== "idle") {
-        this.scene.remove(this.stageScenes[animationName]);
+        this.moveSceneAnimationCreate(animationName, "down", duration * 1000);
+        // this.scene.remove(this.stageScenes[animationName]); eraseでstageのシーンを消したのでここは無視
       }
       this.penguinAnimationClips[animationName].fadeOut(duration);
       resolve();
@@ -220,7 +221,7 @@ export default class Cavnas {
       return false;
     }
     this.stopScene(this.currentSeneName);
-    await this.playScene(sceneName);
+    this.playScene(sceneName);
   }
 
   rendering() {
