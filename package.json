@@ -7,7 +7,8 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack -w",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+		"format": "prettier -w ./src/**/*.ts"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.7",
+    "google-fonts-plugin": "^5.0.2",
     "three": "^0.115.0"
   }
 }

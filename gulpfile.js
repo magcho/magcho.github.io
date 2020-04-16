@@ -45,7 +45,7 @@ exports.pugBuild = pugBuild;
 
 const stylusBuild = (cb) => {
   gulp
-    .src("./src/stylus/**/!(_)*.stl")
+    .src("./src/stylus/**/!(_)*.styl")
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),
@@ -87,7 +87,7 @@ const watch = () => {
     series(pugBuild, reload)
   );
   gulp.watch(
-    "./src/**/*.stl",
+    "./src/**/*.styl",
     { ignoreInitial: false },
     series(stylusBuild, reload)
   );

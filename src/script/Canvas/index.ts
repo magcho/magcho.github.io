@@ -1,20 +1,22 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import Stats from "three/examples/jsm/libs/stats.module";
+// import Stats from "three/examples/jsm/libs/stats.module";
 import Easing from "../Easing";
 
 export default class Cavnas {
   private renderer: THREE.WebGLRenderer;
+  private rendererSkill: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
   private control: OrbitControls;
-  private stats: Stats;
+  // private stats: Stats;
 
   private stageScenes;
   private stageAnimationClips;
   private penguinAnimationClips;
   private windowSize = { w: 0, h: 0 };
+  private skillAreaSize = { w: 0, h: 0 };
   private windowScroll: number;
   private stageAssets;
   private animationMixers: THREE.AnimationMixer[];
@@ -46,14 +48,18 @@ export default class Cavnas {
 
     this.windowSize.w = window.innerWidth;
     this.windowSize.h = window.innerHeight;
-    // this.windowSize.w = document.getElementById("page1").clientWidth;
-    // this.windowSize.h = document.getElementById("page1").clientHeight;
+
+    this.skillAreaSize.h = document.getElementById(
+      "skill_container"
+    ).offsetHeight;
+    this.skillAreaSize.w = document.getElementById(
+      "three_container2"
+    ).offsetWidth;
 
     this.windowScroll = 0;
-
     this.animateStack = [];
 
-    // renderer
+    // first renderer
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -63,8 +69,21 @@ export default class Cavnas {
     );
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     document
-      .getElementById("three_container")
+      .getElementById("three_container1")
       .appendChild(this.renderer.domElement);
+
+    // second renderer
+    this.rendererSkill = new THREE.WebGLRenderer({ alpha: true });
+    this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
+    this.rendererSkill.setPixelRatio(window.devicePixelRatio);
+    this.rendererSkill.setClearColor(0x000000, 0);
+    this.rendererSkill.clippingPlanes.push(
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+    );
+    this.rendererSkill.outputEncoding = THREE.sRGBEncoding;
+    document
+      .getElementById("three_container2")
+      .appendChild(this.rendererSkill.domElement);
 
     // init camera
     this.camera = new THREE.PerspectiveCamera(
@@ -80,9 +99,10 @@ export default class Cavnas {
 
     // init control
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
-    this.control.autoRotate = false;
-    this.control.enableRotate = false;
-    this.control.dispose();
+    this.control.autoRotate = true;
+    // this.control.enableRotate = false;
+    // this.control.dispose();
+    this.control.enableZoom = false;
     this.control.target.set(0, 0.5, 0);
 
     // init light
@@ -93,7 +113,7 @@ export default class Cavnas {
     this.scene.add(spotLight);
 
     // init mesh
-    this.scene.add(new THREE.GridHelper(10, 5));
+    // this.scene.add(new THREE.GridHelper(10, 5));
 
     // loadModels
     this.stageScenes = {};
@@ -149,9 +169,9 @@ export default class Cavnas {
       .then(() => {
         return new Promise(resolve => {
           this.clock = new THREE.Clock();
-          this.stats = Stats();
+          /* this.stats = Stats();
           this.stats.showPanel(0);
-          document.body.appendChild(this.stats.dom);
+          document.body.appendChild(this.stats.dom); */
           this.rendering();
           console.log(2);
           resolve();
@@ -230,7 +250,7 @@ export default class Cavnas {
   }
 
   rendering() {
-    this.stats.begin();
+    // this.stats.begin();
     if (this.animationMixers && this.animationMixers.length > 0) {
       const delta = this.clock.getDelta();
       for (let i = 0; i < this.animationMixers.length; i++) {
@@ -243,7 +263,7 @@ export default class Cavnas {
 
     this.renderer.render(this.scene, this.camera);
     this.control.update();
-    this.stats.end();
+    // this.stats.end();
 
     requestAnimationFrame(() => {
       this.rendering();
@@ -284,8 +304,6 @@ export default class Cavnas {
   windowResize() {
     this.windowSize.h = window.innerHeight;
     this.windowSize.w = window.innerWidth;
-    // this.windowSize.w = document.getElementById("page1").clientWidth;
-    // this.windowSize.h = document.getElementById("page1").clientHeight;
 
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);

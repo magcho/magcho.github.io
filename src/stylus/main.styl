@@ -1,0 +1,121 @@
+@import "./_common"
+// @import "woff2.css"
+
+
+*
+  box-sizing border-box
+  margin 0
+  padding 0
+
+#contents_container
+  height 100vh //fallback
+  height calc(var(--vh, 1vh) * 100);
+  
+  overflow-y scroll
+  scroll-snap-type: y mandatory;
+  .page
+    height 100vh //fallback
+    height calc(var(--vh, 1vh) * 100);
+    width 100vw
+    scroll-snap-align: start
+    position relative
+
+  #page1
+    background-color #015b81
+
+    #three_container1
+      canvas
+        margin 0
+        background-color: #aad6e6
+    #links
+      position absolute
+      bottom 0px
+      padding 1rem
+
+      li
+        padding 0
+        margin-top 0.5rem
+        font-size 6rem
+        height 6rem
+        line-height 6rem
+        background-color black 
+        width fit-content
+        font-family: 'Oswald'
+        font-weight 200
+        transition 0.5s font-weight 
+    
+        &:hover
+          font-weight 700
+       
+        a
+          text-decoration none
+          color white // fallback
+          color transparent
+          -webkit-text-stroke 3px white
+
+  #page2,
+  #page3,
+  #page4
+    
+    padding 1rem
+    
+    *
+      margin 0 auto
+      display block
+   
+    h2
+      margin-bottom 3rem
+      color black
+      font-size 6rem
+      height 6rem
+      line-height 6rem
+      width fit-content
+      font-family 'Oswald'
+      font-weight 400
+      display block
+
+    img
+      border-radius 100%
+      border 5px solid white
+      height 33vmax
+      max-height 50vmin
+      width 33vmax
+      max-width 50vmin
+    
+    p
+      width fit-content
+      margin-top 1rem
+
+
+  #page2
+    background-color #fff172
+    
+    #skill_container
+      height calc(100vh - 10rem)
+
+      #skillArea
+        width calc(50vw - 1rem)
+        margin 0
+        float left
+        h3 
+          font-size 4rem
+          font-family 'Oswald'
+          font-weight 200
+
+      #three_container2
+        margin 0
+        float left
+        width calc(50vw - 1rem)
+        background-color blue
+      
+
+      
+  #page3
+    background-color #c0b9ff
+
+  #page4
+    background-color #9ee8a4
+
+
+
+
