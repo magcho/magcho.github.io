@@ -22,6 +22,15 @@ class MainPage {
       this.canvas.xFadeScene("electro");
     });
 
+    document.getElementById("penguin_in").addEventListener("click", () => {
+      // this.canvas.penguinAnimation("in");
+      this.canvas.moveSceneAnimationCreate("penguin", "up", 500);
+    });
+    document.getElementById("penguin_out").addEventListener("click", () => {
+      // this.canvas.penguinAnimation("out");
+      this.canvas.moveSceneAnimationCreate("penguin", "down", 500, 0);
+    });
+
     //window resize
     window.addEventListener("resize", () => {
       this.canvas.windowResize();

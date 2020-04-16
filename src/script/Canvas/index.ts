@@ -24,6 +24,7 @@ export default class Cavnas {
 
   private currentSeneName: string;
   private animateStack: Easing[];
+  private penguinState: number; //0: hiden, 1:show
 
   constructor() {
     this.stageAssets = [
@@ -96,6 +97,7 @@ export default class Cavnas {
     this.stageScenes = {};
     this.stageAnimationClips = {};
     this.animationMixers = [];
+    this.penguinState = 0;
     this.loader = new GLTFLoader();
     new Promise(resolve => {
       const gtlfLoader = new GLTFLoader();
@@ -120,7 +122,9 @@ export default class Cavnas {
         };
         this.animationMixers.push(animeMixer);
         this.penguinScene = obj;
+        this.penguinScene.position.y = -1.1;
         this.scene.add(this.penguinScene);
+        this.penguinState = 1;
 
         resolve();
       });
@@ -248,12 +252,18 @@ export default class Cavnas {
   moveSceneAnimationCreate(
     sceneName: string,
     direction: string,
-    duration: number
+    duration: number,
+    waitTime: number = 100
   ) {
     if (sceneName === "penguin") {
       this.animateStack.push(
-        new Easing(this.penguinScene, sceneName, direction, duration)
+        new Easing(this.penguinScene, sceneName, direction, duration, waitTime)
       );
+      if (direction === "up") {
+        this.penguinState = 1;
+      } else if (direction === "down") {
+        this.penguinState = 0;
+      }
     } else {
       this.animateStack.push(
         new Easing(this.stageScenes[sceneName], sceneName, direction, duration)
@@ -266,9 +276,7 @@ export default class Cavnas {
       return;
     }
     this.animateStack = this.animateStack.filter(anime => {
-      const t = anime.update();
-      console.log(t);
-      return t;
+      return anime.update();
     });
   }
 
