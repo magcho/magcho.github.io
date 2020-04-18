@@ -3,13 +3,12 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import Stats from "three/examples/jsm/libs/stats.module";
 import Easing from "../Easing";
-import PageWacther from "../PageWatcher";
 
 export default class Cavnas {
   private renderer: THREE.WebGLRenderer;
   private rendererSkill: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
-  private scene: THREE.Scene[];
+  private scene: THREE.Scene;
   private control: OrbitControls;
   // private stats: Stats;
 
@@ -26,7 +25,6 @@ export default class Cavnas {
 
   private currentSeneName: string;
   private animateStack: Easing[];
-  private currentPage: number;
   private penguinState: number; //0: hiden, 1:show
 
   constructor() {
@@ -58,11 +56,8 @@ export default class Cavnas {
       "three_container2"
     ).offsetWidth;
 
-    this.currentPage = 0;
-
     this.windowScroll = 0;
     this.animateStack = [];
-    this.scene = [];
 
     // first renderer
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -100,8 +95,7 @@ export default class Cavnas {
     this.camera.position.set(1.5, 1.5, 1.5);
 
     // init scene
-    this.scene.push(new THREE.Scene());
-    this.scene.push(new THREE.Scene());
+    this.scene = new THREE.Scene();
 
     // init control
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
@@ -112,16 +106,11 @@ export default class Cavnas {
     this.control.target.set(0, 0.5, 0);
 
     // init light
-    this.scene[0].add(new THREE.AmbientLight(0xffffff, 0.5));
-    this.scene[1].add(new THREE.AmbientLight(0xffffff, 0.5));
-
-    const spotLight1 = new THREE.SpotLight(0xffffff, 0.5);
-    spotLight1.position.set(1, 4, 2);
-    this.scene[0].add(spotLight1);
-
-    const spotLight2 = new THREE.SpotLight(0xffffff, 0.5);
-    spotLight2.position.set(1, 4, 2);
-    this.scene[0].add(spotLight2);
+    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const spotLight = new THREE.SpotLight(0xffffff, 1);
+    spotLight.position.y = 10;
+    spotLight.position.z = 5;
+    this.scene.add(spotLight);
 
     // init mesh
     // this.scene.add(new THREE.GridHelper(10, 5));
@@ -159,10 +148,10 @@ export default class Cavnas {
         this.animationMixers.push(animeMixer);
         this.penguinScene = obj;
         this.penguinScene.position.y = -1.1;
-        this.scene[0].add(this.penguinScene);
+        this.scene.add(this.penguinScene);
         this.penguinState = 1;
 
-        resolve();
+        // resolve();
       });
     })
       .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb"))
@@ -181,8 +170,8 @@ export default class Cavnas {
         return new Promise(resolve => {
           this.clock = new THREE.Clock();
           /* this.stats = Stats();
-						 this.stats.showPanel(0);
-						 document.body.appendChild(this.stats.dom); */
+          this.stats.showPanel(0);
+          document.body.appendChild(this.stats.dom); */
           this.rendering();
           console.log(2);
           resolve();
@@ -221,16 +210,12 @@ export default class Cavnas {
     });
   }
 
-  playScene(
-    nextSceneName: string,
-    duration: number = 0.5,
-    renderNum: number = 0
-  ) {
+  playScene(nextSceneName: string, duration = 0.5) {
     return new Promise(resolve => {
       if (nextSceneName !== "idle") {
         this.stageScenes[nextSceneName].position.y = -1.1;
-        this.scene[renderNum].add(this.stageScenes[nextSceneName]);
-        this.moveSceneAnimationCreate(nextSceneName, "up", duration * 1000);
+        this.scene.add(this.stageScenes[nextSceneName]);
+        this.moveSceneAnimationCreate(nextSceneName, "up", 500);
 
         if (nextSceneName === "electro") {
           this.stageAnimationClips["electro"].reset().play();
@@ -248,10 +233,8 @@ export default class Cavnas {
   stopScene(animationName: string, duration: number = 0.5) {
     return new Promise(resolve => {
       if (animationName !== "idle") {
-        this.moveSceneAnimationCreate("penguin", "down", 500, 0);
-      } else {
         this.moveSceneAnimationCreate(animationName, "down", duration * 1000);
-        // this.scene[0].remove(this.stageScenes[animationName]); eraseでstageのシーンを消したのでここは無視
+        // this.scene.remove(this.stageScenes[animationName]); eraseでstageのシーンを消したのでここは無視
       }
       this.penguinAnimationClips[animationName].fadeOut(duration);
       resolve();
@@ -277,10 +260,8 @@ export default class Cavnas {
       }
     }
     this.moveSceneAnimationUpdate();
-    this.currentPageAnimateUpdate();
 
-    this.renderer.render(this.scene[0], this.camera);
-    this.rendererSkill.render(this.scene[1], this.camera);
+    this.renderer.render(this.scene, this.camera);
     this.control.update();
     // this.stats.end();
 
@@ -296,7 +277,6 @@ export default class Cavnas {
     waitTime: number = 100
   ) {
     if (sceneName === "penguin") {
-      console.log(this.penguinScene, direction);
       this.animateStack.push(
         new Easing(this.penguinScene, sceneName, direction, duration, waitTime)
       );
@@ -319,16 +299,6 @@ export default class Cavnas {
     this.animateStack = this.animateStack.filter(anime => {
       return anime.update();
     });
-  }
-
-  currentPageAnimateUpdate() {
-    const currentPage = PageWacther.getCurrentPage();
-    if (this.currentPage == 1 && this.currentPage != currentPage) {
-      this.stopScene("idle");
-      console.log(currentPage);
-    }
-
-    this.currentPage = currentPage;
   }
 
   windowResize() {

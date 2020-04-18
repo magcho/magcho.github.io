@@ -30,15 +30,12 @@ export default class Easing {
     this.ts = performance.now();
 
     if (this.name === "penguin") {
-      // for penguin
-      // console.log(this.scene);
       if (this.direction === "up") {
         this.scene.position.y = this.eraseInBack();
       } else if (this.direction === "down") {
         this.scene.position.y = this.eraseIn();
       }
     } else {
-      // for stage
       if (this.direction === "up") {
         this.scene.position.y = this.eraseOut();
       } else if (this.direction === "down") {
@@ -64,7 +61,6 @@ export default class Easing {
     } else {
       return true;
     }
-    return true;
   }
 
   private eraseIn(): number {
