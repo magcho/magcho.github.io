@@ -4,12 +4,12 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import Stats from "three/examples/jsm/libs/stats.module";
 import Easing from "../Easing";
 import CurrentPage from "../CurrentPage";
-import { Bone } from "three";
 
 export default class Cavnas {
   private renderer: THREE.WebGLRenderer;
   private rendererSkill: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
+  private cameras: THREE.PerspectiveCamera[];
   private scene: THREE.Scene;
   private scenes: THREE.Scene[];
   private control: OrbitControls;
@@ -35,6 +35,7 @@ export default class Cavnas {
   constructor() {
     this.currentPage = new CurrentPage();
     this.penguinScenes = [];
+    this.cameras = [];
     this.stageAssets = [
       {
         name: "pa",
@@ -85,22 +86,24 @@ export default class Cavnas {
     this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
     this.rendererSkill.setPixelRatio(window.devicePixelRatio);
     this.rendererSkill.setClearColor(0x000000, 0);
-    // this.rendererSkill.clippingPlanes.push(
-    //   new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-    // );
+    this.rendererSkill.clippingPlanes.push(
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+    );
     this.rendererSkill.outputEncoding = THREE.sRGBEncoding;
     document
       .getElementById("three_container2")
       .appendChild(this.rendererSkill.domElement);
 
     // init camera
-    this.camera = new THREE.PerspectiveCamera(
-      60,
-      this.windowSize.w / this.windowSize.h,
-      0.1,
-      100
+    this.cameras.push(
+      new THREE.PerspectiveCamera(
+        60,
+        this.windowSize.w / this.windowSize.h,
+        0.1,
+        100
+      )
     );
-    this.camera.position.set(1.5, 1.5, 1.5);
+    this.cameras[0].position.set(1.5, 1.5, 1.5);
 
     // init scene
     this.scene = new THREE.Scene();
@@ -108,7 +111,7 @@ export default class Cavnas {
     this.scenes.push(new THREE.Scene());
 
     // init control
-    this.control = new OrbitControls(this.camera, this.renderer.domElement);
+    this.control = new OrbitControls(this.cameras[0], this.renderer.domElement);
     this.control.autoRotate = true;
     // this.control.enableRotate = false;
     // this.control.dispose();
@@ -134,6 +137,7 @@ export default class Cavnas {
     this.stageAnimationClips = {};
     this.animationMixers = [];
     this.penguinState = 0;
+    this.penguinAnimationClips = [];
 
     new Promise(resolve => {
       const loadingManager = new THREE.LoadingManager();
@@ -145,7 +149,7 @@ export default class Cavnas {
         const animations = gltf.animations;
         const animeMixer = new THREE.AnimationMixer(obj);
 
-        this.penguinAnimationClips = {
+        this.penguinAnimationClips[0] = {
           idle: animeMixer.clipAction(
             THREE.AnimationClip.findByName(animations, "Idle")
           ),
@@ -182,7 +186,7 @@ export default class Cavnas {
               const animations = gltf.animations;
               const animeMixer = new THREE.AnimationMixer(obj);
 
-              this.penguinAnimationClips = {
+              this.penguinAnimationClips[1] = {
                 idle: animeMixer.clipAction(
                   THREE.AnimationClip.findByName(animations, "Idle")
                 ),
@@ -213,7 +217,7 @@ export default class Cavnas {
         return new Promise(resolve => {
           // default animation
           this.currentSeneName = "idle";
-          this.penguinAnimationClips["idle"].play();
+          this.penguinAnimationClips[0]["idle"].play();
           console.log(1);
           resolve();
         });
@@ -253,7 +257,7 @@ export default class Cavnas {
       })
       .then(() => {
         return new Promise(resolve => {
-          this.moveSceneAnimationCreate("penguin", "up", 500);
+          this.moveSceneAnimationCreate("penguin", "up", 500, "top");
           console.log(3);
           resolve();
         });
@@ -293,18 +297,18 @@ export default class Cavnas {
     duration = 0.5
   ) {
     return new Promise(resolve => {
-      let canvasTarget = target === "top" ? 0 : target == "skill" ? 1 : 0;
+      const targetNum = target === "top" ? 0 : target == "skill" ? 1 : 0;
 
       if (nextSceneName !== "idle") {
         this.stageScenes[nextSceneName].position.y = -1.1;
         this.scenes[1].add(this.stageScenes[nextSceneName]);
-        this.moveSceneAnimationCreate(nextSceneName, "up", 500);
+        this.moveSceneAnimationCreate(nextSceneName, "up", 500, target);
 
         if (nextSceneName === "electro") {
           this.stageAnimationClips["electro"].reset().play();
         }
       }
-      this.penguinAnimationClips[nextSceneName]
+      this.penguinAnimationClips[targetNum][nextSceneName]
         .reset()
         .fadeIn(duration)
         .play();
@@ -313,13 +317,23 @@ export default class Cavnas {
     });
   }
 
-  stopScene(animationName: string, duration: number = 0.5) {
+  stopScene(
+    animationName: string,
+    target: string = "top",
+    duration: number = 0.5
+  ) {
     return new Promise(resolve => {
+      const targetNum = target === "top" ? 0 : target == "skill" ? 1 : 0;
       if (animationName !== "idle") {
-        this.moveSceneAnimationCreate(animationName, "down", duration * 1000);
+        this.moveSceneAnimationCreate(
+          animationName,
+          "down",
+          duration * 1000,
+          target
+        );
         // this.scene.remove(this.stageScenes[animationName]); eraseでstageのシーンを消したのでここは無視
       }
-      this.penguinAnimationClips[animationName].fadeOut(duration);
+      this.penguinAnimationClips[targetNum][animationName].fadeOut(duration);
       resolve();
     });
   }
@@ -328,7 +342,7 @@ export default class Cavnas {
     if (sceneName === this.currentSeneName) {
       return false;
     }
-    this.stopScene(this.currentSeneName);
+    this.stopScene(this.currentSeneName, target);
     this.playScene(sceneName, target);
   }
 
@@ -340,18 +354,21 @@ export default class Cavnas {
       // 下方向へ遷移
       if (pageStatus[0] == 1 && pageStatus[1] == 2) {
         // 1 -> 2
-        this.moveSceneAnimationCreate("penguin", "down", 500, 0);
+        this.moveSceneAnimationCreate("penguin", "down", 500, "top", 0);
+        this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 5);
         return;
       } else if (pageStatus[0] == 2 && pageStatus[1] == 3) {
-        this.moveSceneAnimationCreate("penguin", "down", 500, 0);
+        this.moveSceneAnimationCreate("penguin", "down", 500, "skill", 0);
         return;
       }
 
       //上方向へ遷移
       if (pageStatus[0] == 2 && pageStatus[1] == 1) {
-        console.log("up");
-        this.moveSceneAnimationCreate("penguin", "up", 500, 0);
+        this.moveSceneAnimationCreate("penguin", "down", 500, "skill", 0);
+        this.moveSceneAnimationCreate("penguin", "up", 500, "top", 0);
         return;
+      } else if (pageStatus[0] === 3 && pageStatus[1] === 2) {
+        this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 0);
       }
     }
   }
@@ -370,8 +387,8 @@ export default class Cavnas {
     }
     this.moveSceneAnimationUpdate();
 
-    this.renderer.render(this.scenes[0], this.camera);
-    this.rendererSkill.render(this.scenes[1], this.camera);
+    this.renderer.render(this.scenes[0], this.cameras[0]);
+    this.rendererSkill.render(this.scenes[1], this.cameras[0]);
     this.control.update();
     // this.stats.end();
 
@@ -384,12 +401,14 @@ export default class Cavnas {
     sceneName: string,
     direction: string,
     duration: number,
+    target: string = "top",
     waitTime: number = 100
   ) {
+    const targetNum = target === "top" ? 0 : target === "skill" ? 1 : 0;
     if (sceneName === "penguin") {
       this.animateStack.push(
         new Easing(
-          this.penguinScenes[0],
+          this.penguinScenes[targetNum],
           sceneName,
           direction,
           duration,
@@ -434,7 +453,7 @@ export default class Cavnas {
     this.rendererSkill.setPixelRatio(window.devicePixelRatio);
     this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
 
-    this.camera.aspect = this.windowSize.w / this.windowSize.h;
-    this.camera.updateProjectionMatrix();
+    this.cameras[0].aspect = this.windowSize.w / this.windowSize.h;
+    this.cameras[0].updateProjectionMatrix();
   }
 }

@@ -11,19 +11,19 @@ class MainPage {
 
   initEvent() {
     // skill
-    document.getElementById("pa").addEventListener("hover", () => {
+    document.getElementById("pa").addEventListener("mouseover", () => {
       this.canvas.xFadeScene("pa", "skill");
     });
-    document.getElementById("program").addEventListener("hover", () => {
+    document.getElementById("program").addEventListener("mouseover", () => {
       this.canvas.xFadeScene("program", "skill");
     });
-    document.getElementById("electro").addEventListener("hover", () => {
+    document.getElementById("electro").addEventListener("mouseover", () => {
       this.canvas.xFadeScene("electro", "skill");
     });
 
-    document.getElementById("idle").addEventListener("click", () => {
-      this.canvas.xFadeScene("idle", "skill");
-    });
+    // document.getElementById("idle").addEventListener("click", () => {
+    //   this.canvas.xFadeScene("idle", "skill");
+    // });
     document.getElementById("pa").addEventListener("click", () => {
       this.canvas.xFadeScene("pa", "skill");
     });
@@ -34,12 +34,18 @@ class MainPage {
       this.canvas.xFadeScene("electro", "skill");
     });
 
-    document.getElementById("penguin_in").addEventListener("click", () => {
-      this.canvas.moveSceneAnimationCreate("penguin", "up", 500);
-    });
-    document.getElementById("penguin_out").addEventListener("click", () => {
-      this.canvas.moveSceneAnimationCreate("penguin", "down", 500);
-    });
+    // document.getElementById("penguin_in1").addEventListener("click", () => {
+    //   this.canvas.moveSceneAnimationCreate("penguin", "up", 500, "top");
+    // });
+    // document.getElementById("penguin_out1").addEventListener("click", () => {
+    //   this.canvas.moveSceneAnimationCreate("penguin", "down", 500, "top");
+    // });
+    // document.getElementById("penguin_in2").addEventListener("click", () => {
+    //   this.canvas.moveSceneAnimationCreate("penguin", "up", 500, "skill");
+    // });
+    // document.getElementById("penguin_out2").addEventListener("click", () => {
+    //   this.canvas.moveSceneAnimationCreate("penguin", "down", 500, "skill");
+    // });
 
     //window resize
     window.addEventListener("resize", () => {
