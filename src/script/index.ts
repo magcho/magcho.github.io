@@ -1,38 +1,44 @@
 import Canvas from "./Canvas";
-import OnWindowEvent from "./OnWindowEvent";
 
 class MainPage {
   private canvas: Canvas;
-  private onWindowEvent: OnWindowEvent;
-
-  private currentPage: number;
 
   constructor() {
     this.canvas = new Canvas();
-    // this.onWindowEvent = new OnWindowEvent();
+
     this.initEvent();
   }
 
   initEvent() {
     // skill
     document.getElementById("pa").addEventListener("hover", () => {
-      this.canvas.xFadeScene("pa");
+      this.canvas.xFadeScene("pa", "skill");
     });
     document.getElementById("program").addEventListener("hover", () => {
-      this.canvas.xFadeScene("program");
+      this.canvas.xFadeScene("program", "skill");
     });
     document.getElementById("electro").addEventListener("hover", () => {
-      this.canvas.xFadeScene("electro");
+      this.canvas.xFadeScene("electro", "skill");
     });
 
-    // currentPage
-    document
-      .getElementById("contents_container")
-      .addEventListener("scroll", (e) => {
-        this.currentPage = this.getCurrentPage();
-      });
-    window.addEventListener("resize", () => {
-      this.currentPage = this.getCurrentPage();
+    document.getElementById("idle").addEventListener("click", () => {
+      this.canvas.xFadeScene("idle", "skill");
+    });
+    document.getElementById("pa").addEventListener("click", () => {
+      this.canvas.xFadeScene("pa", "skill");
+    });
+    document.getElementById("program").addEventListener("click", () => {
+      this.canvas.xFadeScene("program", "skill");
+    });
+    document.getElementById("electro").addEventListener("click", () => {
+      this.canvas.xFadeScene("electro", "skill");
+    });
+
+    document.getElementById("penguin_in").addEventListener("click", () => {
+      this.canvas.moveSceneAnimationCreate("penguin", "up", 500);
+    });
+    document.getElementById("penguin_out").addEventListener("click", () => {
+      this.canvas.moveSceneAnimationCreate("penguin", "down", 500);
     });
 
     //window resize

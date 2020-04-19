@@ -3,12 +3,15 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import Stats from "three/examples/jsm/libs/stats.module";
 import Easing from "../Easing";
+import CurrentPage from "../CurrentPage";
+import { Bone } from "three";
 
 export default class Cavnas {
   private renderer: THREE.WebGLRenderer;
   private rendererSkill: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
+  private scenes: THREE.Scene[];
   private control: OrbitControls;
   // private stats: Stats;
 
@@ -22,12 +25,16 @@ export default class Cavnas {
   private animationMixers: THREE.AnimationMixer[];
   private clock: THREE.Clock;
   private penguinScene: THREE.Group;
+  private penguinScenes: THREE.Group[];
 
   private currentSeneName: string;
   private animateStack: Easing[];
   private penguinState: number; //0: hiden, 1:show
+  private currentPage: CurrentPage;
 
   constructor() {
+    this.currentPage = new CurrentPage();
+    this.penguinScenes = [];
     this.stageAssets = [
       {
         name: "pa",
@@ -58,6 +65,7 @@ export default class Cavnas {
 
     this.windowScroll = 0;
     this.animateStack = [];
+    this.scenes = [];
 
     // first renderer
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -77,9 +85,9 @@ export default class Cavnas {
     this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
     this.rendererSkill.setPixelRatio(window.devicePixelRatio);
     this.rendererSkill.setClearColor(0x000000, 0);
-    this.rendererSkill.clippingPlanes.push(
-      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-    );
+    // this.rendererSkill.clippingPlanes.push(
+    //   new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
+    // );
     this.rendererSkill.outputEncoding = THREE.sRGBEncoding;
     document
       .getElementById("three_container2")
@@ -96,6 +104,8 @@ export default class Cavnas {
 
     // init scene
     this.scene = new THREE.Scene();
+    this.scenes.push(new THREE.Scene());
+    this.scenes.push(new THREE.Scene());
 
     // init control
     this.control = new OrbitControls(this.camera, this.renderer.domElement);
@@ -106,11 +116,15 @@ export default class Cavnas {
     this.control.target.set(0, 0.5, 0);
 
     // init light
-    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-    const spotLight = new THREE.SpotLight(0xffffff, 1);
-    spotLight.position.y = 10;
-    spotLight.position.z = 5;
-    this.scene.add(spotLight);
+    this.scenes[0].add(new THREE.AmbientLight(0xffffff, 0.5));
+    this.scenes[1].add(new THREE.AmbientLight(0xffffff, 0.5));
+    let spotLight = new THREE.SpotLight(0xffffff, 0.5);
+    spotLight.position.set(1, 4, 2);
+    this.scenes[0].add(spotLight);
+
+    spotLight = new THREE.SpotLight(0xffffff, 0.5);
+    spotLight.position.set(1, 4, 2);
+    this.scenes[1].add(spotLight);
 
     // init mesh
     // this.scene.add(new THREE.GridHelper(10, 5));
@@ -146,14 +160,52 @@ export default class Cavnas {
           )
         };
         this.animationMixers.push(animeMixer);
-        this.penguinScene = obj;
-        this.penguinScene.position.y = -1.1;
-        this.scene.add(this.penguinScene);
+        // this.penguinScene = obj;
+        // this.penguinScene.position.y = -1.1;
+        this.penguinScenes.push(obj);
+        this.penguinScenes[0].position.y = -1.1;
+        this.scenes[0].add(this.penguinScenes[0]);
         this.penguinState = 1;
 
         // resolve();
       });
     })
+      .then(
+        () =>
+          new Promise(resolve => {
+            const loadingManager = new THREE.LoadingManager();
+            const gtlfLoader = new GLTFLoader(loadingManager);
+            loadingManager.onLoad = resolve;
+
+            gtlfLoader.load("./model/penguin.glb", gltf => {
+              const obj = gltf.scene;
+              const animations = gltf.animations;
+              const animeMixer = new THREE.AnimationMixer(obj);
+
+              this.penguinAnimationClips = {
+                idle: animeMixer.clipAction(
+                  THREE.AnimationClip.findByName(animations, "Idle")
+                ),
+                pa: animeMixer.clipAction(
+                  THREE.AnimationClip.findByName(animations, "PA")
+                ),
+                electro: animeMixer.clipAction(
+                  THREE.AnimationClip.findByName(animations, "Electro_solid")
+                ),
+                program: animeMixer.clipAction(
+                  THREE.AnimationClip.findByName(animations, "Program")
+                )
+              };
+              this.animationMixers.push(animeMixer);
+              this.penguinScenes.push(obj);
+              this.penguinScenes[1].position.y = -1.1;
+              this.scenes[1].add(this.penguinScenes[1]);
+              this.penguinState = 1;
+
+              // resolve();
+            });
+          })
+      )
       .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb"))
       .then(() => this.loadSingleStage("program", "./model/stage_program.glb"))
       .then(() => this.loadSingleStage("electro", "./model/stage_electro.glb"))
@@ -166,6 +218,28 @@ export default class Cavnas {
           resolve();
         });
       })
+      .then(
+        () =>
+          new Promise(resolve => {
+            let circle = new THREE.Mesh(
+              new THREE.CircleGeometry(0.5, 32),
+              new THREE.MeshBasicMaterial({ color: 0x002255 })
+            );
+            circle.rotateX(-Math.PI / 2);
+            circle.position.y = 0.0001;
+            this.scenes[0].add(circle);
+
+            circle = new THREE.Mesh(
+              new THREE.CircleGeometry(0.5, 32),
+              new THREE.MeshBasicMaterial({ color: 0x002255 })
+            );
+            circle.rotateX(-Math.PI / 2);
+            circle.position.y = 0.0001;
+            this.scenes[1].add(circle);
+
+            resolve();
+          })
+      )
       .then(() => {
         return new Promise(resolve => {
           this.clock = new THREE.Clock();
@@ -210,11 +284,20 @@ export default class Cavnas {
     });
   }
 
-  playScene(nextSceneName: string, duration = 0.5) {
+  /**
+   *
+   */
+  private playScene(
+    nextSceneName: string,
+    target: string = "top",
+    duration = 0.5
+  ) {
     return new Promise(resolve => {
+      let canvasTarget = target === "top" ? 0 : target == "skill" ? 1 : 0;
+
       if (nextSceneName !== "idle") {
         this.stageScenes[nextSceneName].position.y = -1.1;
-        this.scene.add(this.stageScenes[nextSceneName]);
+        this.scenes[1].add(this.stageScenes[nextSceneName]);
         this.moveSceneAnimationCreate(nextSceneName, "up", 500);
 
         if (nextSceneName === "electro") {
@@ -241,15 +324,41 @@ export default class Cavnas {
     });
   }
 
-  async xFadeScene(sceneName: string) {
+  public async xFadeScene(sceneName: string, target: string) {
     if (sceneName === this.currentSeneName) {
       return false;
     }
     this.stopScene(this.currentSeneName);
-    this.playScene(sceneName);
+    this.playScene(sceneName, target);
+  }
+
+  private pageMoveAnimateManagerUpdate() {
+    if (this.currentPage.update()) {
+      // ページ遷移
+      const pageStatus = this.currentPage.status;
+
+      // 下方向へ遷移
+      if (pageStatus[0] == 1 && pageStatus[1] == 2) {
+        // 1 -> 2
+        this.moveSceneAnimationCreate("penguin", "down", 500, 0);
+        return;
+      } else if (pageStatus[0] == 2 && pageStatus[1] == 3) {
+        this.moveSceneAnimationCreate("penguin", "down", 500, 0);
+        return;
+      }
+
+      //上方向へ遷移
+      if (pageStatus[0] == 2 && pageStatus[1] == 1) {
+        console.log("up");
+        this.moveSceneAnimationCreate("penguin", "up", 500, 0);
+        return;
+      }
+    }
   }
 
   rendering() {
+    this.pageMoveAnimateManagerUpdate();
+
     // this.stats.begin();
     if (this.animationMixers && this.animationMixers.length > 0) {
       const delta = this.clock.getDelta();
@@ -261,7 +370,8 @@ export default class Cavnas {
     }
     this.moveSceneAnimationUpdate();
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scenes[0], this.camera);
+    this.rendererSkill.render(this.scenes[1], this.camera);
     this.control.update();
     // this.stats.end();
 
@@ -278,7 +388,13 @@ export default class Cavnas {
   ) {
     if (sceneName === "penguin") {
       this.animateStack.push(
-        new Easing(this.penguinScene, sceneName, direction, duration, waitTime)
+        new Easing(
+          this.penguinScenes[0],
+          sceneName,
+          direction,
+          duration,
+          waitTime
+        )
       );
       if (direction === "up") {
         this.penguinState = 1;
@@ -305,8 +421,18 @@ export default class Cavnas {
     this.windowSize.h = window.innerHeight;
     this.windowSize.w = window.innerWidth;
 
+    this.skillAreaSize.h = document.getElementById(
+      "skill_container"
+    ).offsetHeight;
+    this.skillAreaSize.w = document.getElementById(
+      "three_container2"
+    ).offsetWidth;
+
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);
+
+    this.rendererSkill.setPixelRatio(window.devicePixelRatio);
+    this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
 
     this.camera.aspect = this.windowSize.w / this.windowSize.h;
     this.camera.updateProjectionMatrix();
