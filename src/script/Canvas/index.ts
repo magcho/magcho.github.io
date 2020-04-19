@@ -13,6 +13,7 @@ export default class Cavnas {
   private scene: THREE.Scene;
   private scenes: THREE.Scene[];
   private control: OrbitControls;
+  private controls: OrbitControls[];
   // private stats: Stats;
 
   private stageScenes;
@@ -36,6 +37,7 @@ export default class Cavnas {
     this.currentPage = new CurrentPage();
     this.penguinScenes = [];
     this.cameras = [];
+    this.controls = [];
     this.stageAssets = [
       {
         name: "pa",
@@ -104,6 +106,15 @@ export default class Cavnas {
       )
     );
     this.cameras[0].position.set(1.5, 1.5, 1.5);
+    this.cameras.push(
+      new THREE.PerspectiveCamera(
+        60,
+        this.skillAreaSize.w / this.skillAreaSize.h,
+        0.1,
+        100
+      )
+    );
+    this.cameras[1].position.set(1.5, 1.5, 1.5);
 
     // init scene
     this.scene = new THREE.Scene();
@@ -111,12 +122,21 @@ export default class Cavnas {
     this.scenes.push(new THREE.Scene());
 
     // init control
-    this.control = new OrbitControls(this.cameras[0], this.renderer.domElement);
-    this.control.autoRotate = true;
+    this.controls.push(
+      new OrbitControls(this.cameras[0], this.renderer.domElement)
+    );
+    this.controls[0].autoRotate = true;
     // this.control.enableRotate = false;
     // this.control.dispose();
-    this.control.enableZoom = false;
-    this.control.target.set(0, 0.5, 0);
+    this.controls[0].enableZoom = false;
+    this.controls[0].target.set(0, 0.5, 0);
+
+    this.controls.push(
+      new OrbitControls(this.cameras[1], this.rendererSkill.domElement)
+    );
+    this.controls[1].autoRotate = true;
+    this.controls[1].enableZoom = false;
+    this.controls[1].target.set(0, 0.5, 0);
 
     // init light
     this.scenes[0].add(new THREE.AmbientLight(0xffffff, 0.5));
@@ -388,8 +408,9 @@ export default class Cavnas {
     this.moveSceneAnimationUpdate();
 
     this.renderer.render(this.scenes[0], this.cameras[0]);
-    this.rendererSkill.render(this.scenes[1], this.cameras[0]);
-    this.control.update();
+    this.rendererSkill.render(this.scenes[1], this.cameras[1]);
+    this.controls[0].update();
+    this.controls[1].update();
     // this.stats.end();
 
     requestAnimationFrame(() => {
@@ -455,5 +476,8 @@ export default class Cavnas {
 
     this.cameras[0].aspect = this.windowSize.w / this.windowSize.h;
     this.cameras[0].updateProjectionMatrix();
+
+    this.cameras[1].aspect = this.skillAreaSize.w / this.skillAreaSize.h;
+    this.cameras[1].updateProjectionMatrix();
   }
 }
