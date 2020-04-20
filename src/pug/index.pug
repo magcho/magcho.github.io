@@ -11,6 +11,8 @@ html
 
 	body
 		//- div#controls
+			//- button#active active
+			//- button#hover hover
 		//- 	button#idle idle
 		//- 	button#pa PA
 		//- 	button#program program
@@ -29,22 +31,43 @@ html
 						a(href="#page3") CREATION
 					li#profile
 						a(href="#page4") PROFILE
-					li#contacts 
+					li#contacts
 						a(href="#page5") CONTACTS
 
 			#page2.page
-				h2 SKILL
 				#skill_container
 					#skillArea
-						#program
+						h2 SKILL
+						#program.skillSection
 							h3 Programming
 							p
-								| 個人で開発をしています。
-								| JS, TS,
-						#electro
+								| webやemacsパッケージ開発など
+							ul.tools
+								li HTML5
+								li Pug
+								li Stylus
+								li Typescript
+								li C++
+								li Python
+								li Go
+						#electro.skillSection
 							h3 Electronics
-						#pa
+							p
+								| マイコン制御や基板設計など
+							ul.tools
+								li Arduino
+								li Raspberry pi
+								li ESP
+								li KiCAD
+						#pa.skillSection
 							h3 Stage Staff
+							p
+								| 音楽ライブや配信など
+							ul.tools
+								li Lighting
+								li PA
+								li SoundRecording
+								li Streaming
 					#three_container2
 
 			#page3.page
@@ -54,8 +77,8 @@ html
 				h2 PROFILE
 
 				img(src="./img/icon.jpg")
+				p 「SuetakeDai」magchoをハンドルネームとし、創作/開発活動を行う。
 				p ペンギンと梨が好き、あと回転寿司も好き。
-				p 趣味でプログラムをかいたり、ハンダコテ使ったりする。
 				p 東京電機大学に通う大学生、2022年春に卒業予定。
 
 	script(src="./main.js")

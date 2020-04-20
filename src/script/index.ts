@@ -5,20 +5,25 @@ class MainPage {
 
   constructor() {
     this.canvas = new Canvas();
-
     this.initEvent();
   }
 
   initEvent() {
     // skill
-    document.getElementById("pa").addEventListener("mouseover", () => {
-      this.canvas.xFadeScene("pa", "skill");
-    });
     document.getElementById("program").addEventListener("mouseover", () => {
       this.canvas.xFadeScene("program", "skill");
+      this.allSkillSectionDisActive();
+      document.getElementById("program").classList.add("playing");
     });
     document.getElementById("electro").addEventListener("mouseover", () => {
       this.canvas.xFadeScene("electro", "skill");
+      this.allSkillSectionDisActive();
+      document.getElementById("electro").classList.add("playing");
+    });
+    document.getElementById("pa").addEventListener("mouseover", () => {
+      this.canvas.xFadeScene("pa", "skill");
+      this.allSkillSectionDisActive();
+      document.getElementById("pa").classList.add("playing");
     });
 
     // document.getElementById("idle").addEventListener("click", () => {
@@ -53,7 +58,7 @@ class MainPage {
     });
   }
 
-  getCurrentPage(pageNum: number = 4): number {
+  private getCurrentPage(pageNum: number = 4): number {
     const windowHeight = window.innerHeight;
 
     for (let i = 1; i <= pageNum; i++) {
@@ -63,6 +68,12 @@ class MainPage {
         return i;
       }
     }
+  }
+
+  private allSkillSectionDisActive() {
+    Array.from(document.getElementsByClassName("skillSection")).map(ele => {
+      ele.classList.remove("playing");
+    });
   }
 }
 

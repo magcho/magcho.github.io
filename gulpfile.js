@@ -31,7 +31,7 @@ exports.typescriptBuild = typescriptBuild;
 
 const pugBuild = (cb) => {
   gulp
-    .src(["./src/pug/**/*.pug", "!./src/pug/**/*._pug"])
+    .src(["./src/pug/**/*.pug"])
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),
@@ -45,7 +45,7 @@ exports.pugBuild = pugBuild;
 
 const stylusBuild = (cb) => {
   gulp
-    .src("./src/stylus/**/!(_)*.styl")
+    .src("./src/stylus/**/*.styl")
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),

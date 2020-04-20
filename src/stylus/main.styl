@@ -10,11 +10,11 @@
 #controls
   position fixed
   z-index 2
-  
+
 #contents_container
   height 100vh //fallback
   height calc(var(--vh, 1vh) * 100);
-  
+
   overflow-y scroll
   scroll-snap-type: y mandatory;
   .page
@@ -31,6 +31,8 @@
       canvas
         margin 0
         background-color: #aad6e6
+        &:forcus
+          outline: none
     #links
       position absolute
       bottom 0px
@@ -42,11 +44,11 @@
         font-size 6rem
         height 6rem
         line-height 6rem
-        background-color black 
+        background-color black
         width fit-content
         font-family: 'Oswald'
         font-weight 200
-        transition 0.5s font-weight 
+        transition 0.5s font-weight
     
         &:hover
           font-weight 700
@@ -61,22 +63,20 @@
   #page3,
   #page4
     
-    padding 1rem
-    
     *
       margin 0 auto
       display block
    
-    h2
-      margin-bottom 3rem
-      color black
-      font-size 6rem
-      height 6rem
-      line-height 6rem
-      width fit-content
-      font-family 'Oswald'
-      font-weight 400
-      display block
+    // h2
+    //   margin-bottom 3rem
+    //   color black
+    //   font-size 6rem
+    //   height 6rem
+    //   line-height 6rem
+    //   width fit-content
+    //   font-family 'Oswald'
+    //   font-weight 400
+    //   display block
 
     img
       border-radius 100%
@@ -85,35 +85,97 @@
       max-height 50vmin
       width 33vmax
       max-width 50vmin
-    
-    p
-      width fit-content
-      margin-top 1rem
 
 
-  #page2
+  #page2,#page3,#page4
     background-color #fff172
-    
-    #skill_container
-      height calc(100vh - 10rem)
+    color white
 
+    h2
+      margin-bottom 4rem
+      font-size 6rem
+      height 6rem
+      line-height 6rem
+      width fit-content
+      font-family 'Oswald'
+      font-weight 400
+      display block
+      &:after
+            content ""
+            display block
+            width 5rem
+            animation titleAnime 1s infinite
+            border-bottom 2px solid white
+            margin auto
+
+    #skill_container
+      height 100vh
+      max-width 100rem
+      
       #skillArea
-        width calc(50vw - 1rem)
+        width 50vw
+        height 100vh
         margin 0
+        background-color #171a1e
         float left
-        h3 
-          font-size 4rem
+        padding 1rem
+        // &:hover
+        //   color white
+        //   text-fill-color white
+        //   transition 0.5s color
+        
+        .skillSection
+          margin-bottom 2rem
+          color: #161a1e
+          // &:hover
+          //   color white
+          //   text-fill-color white
+          //   transition 0.5s color
+          transition .5s text-fill-color
+          &.active
+            skillActiveAnime(#161a1e, #F00, white, 0.25s)
+          &.playing
+            -webkit-text-fill-color white
+
+        
+
+        h3
+          margin 0 auto
+          margin-bottom .5rem
+          text-align center
+          font-size 3rem
           font-family 'Oswald'
           font-weight 200
 
+        
+        p
+          // margin 1rem
+          text-align center
+          margin-left 1rem
+          margin-bottom 0
+
+        .tools
+          display flex
+          flex-wrap wrap
+          justify-content center
+          margin-left 1rem
+          li
+            // background-color #524a00
+            // color white
+            margin-right .5rem
+            margin-left 0
+
+
       #three_container2
-        margin 0
         float left
         width calc(50vw - 1rem)
-
+        canvas
+          &:focus
+            outline none
       
 
-      
+
+        
   #page3
     background-color #c0b9ff
 

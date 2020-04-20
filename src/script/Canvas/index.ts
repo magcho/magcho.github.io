@@ -278,6 +278,7 @@ export default class Cavnas {
       .then(() => {
         return new Promise(resolve => {
           this.moveSceneAnimationCreate("penguin", "up", 500, "top");
+          // this.playScene("program", "skill", 0);
           console.log(3);
           resolve();
         });
@@ -375,7 +376,7 @@ export default class Cavnas {
       if (pageStatus[0] == 1 && pageStatus[1] == 2) {
         // 1 -> 2
         this.moveSceneAnimationCreate("penguin", "down", 500, "top", 0);
-        this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 5);
+        // this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 5);
         return;
       } else if (pageStatus[0] == 2 && pageStatus[1] == 3) {
         this.moveSceneAnimationCreate("penguin", "down", 500, "skill", 0);
@@ -390,12 +391,26 @@ export default class Cavnas {
       } else if (pageStatus[0] === 3 && pageStatus[1] === 2) {
         this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 0);
       }
+    } else if (this.currentPage.isPageMoveEnd()) {
+      if (this.currentPage.page === 2) {
+        this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 0);
+        Array.from(document.getElementsByClassName("skillSection")).map(ele => {
+          ele.classList.add("active");
+        });
+        if (this.currentSeneName === "idle") {
+          setTimeout(() => {
+            document.getElementById("program").classList.add("playing");
+            this.playScene("program", "skill");
+          }, 1500);
+        }
+      }
+      this.currentPage.page = 0;
     }
   }
 
   rendering() {
     this.pageMoveAnimateManagerUpdate();
-
+    // console.log(this.penguinScenes[1].position.y);
     // this.stats.begin();
     if (this.animationMixers && this.animationMixers.length > 0) {
       const delta = this.clock.getDelta();
@@ -426,6 +441,7 @@ export default class Cavnas {
     waitTime: number = 100
   ) {
     const targetNum = target === "top" ? 0 : target === "skill" ? 1 : 0;
+    console.log(targetNum);
     if (sceneName === "penguin") {
       this.animateStack.push(
         new Easing(
