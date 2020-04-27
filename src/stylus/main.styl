@@ -1,4 +1,5 @@
 @import "./_common"
+@import "./_activity"
 // @import "woff2.css"
 
 
@@ -78,13 +79,7 @@
     //   font-weight 400
     //   display block
 
-    img
-      border-radius 100%
-      border 5px solid white
-      height 33vmax
-      max-height 50vmin
-      width 33vmax
-      max-width 50vmin
+
 
 
   #page2,#page3,#page4
@@ -100,18 +95,19 @@
       font-family 'Oswald'
       font-weight 400
       display block
+      color: black
       &:after
-            content ""
-            display block
-            width 5rem
-            animation titleAnime 1s infinite
-            border-bottom 2px solid white
-            margin auto
+        content ""
+        display block
+        width 5rem
+        animation titleAnime 1s infinite
+        border-bottom 2px solid black
+        margin auto
 
     #skill_container
       height 100vh
       max-width 100rem
-      
+
       #skillArea
         width 50vw
         height 100vh
@@ -123,7 +119,7 @@
         //   color white
         //   text-fill-color white
         //   transition 0.5s color
-        
+
         .skillSection
           margin-bottom 2rem
           color: #161a1e
@@ -137,7 +133,7 @@
           &.playing
             -webkit-text-fill-color white
 
-        
+
 
         h3
           margin 0 auto
@@ -147,7 +143,7 @@
           font-family 'Oswald'
           font-weight 200
 
-        
+
         p
           // margin 1rem
           text-align center
@@ -172,16 +168,45 @@
         canvas
           &:focus
             outline none
-      
 
 
-        
+
+  #page2
+    h2
+      color white
+      &:after
+        border-color white
   #page3
     background-color #c0b9ff
+    // height unset
+    overflow-y scroll
+
+    #activity_container
+      max-width 60rem
+      padding-bottom 100px
+      display flex
+      flex-wrap wrap
+      .activity_item
+        margin-bottom 3rem
+         
+        h3
+          font-weight normal
+          line-height 1em
+          width fit-content
+          margin 0 auto
+        img
+          width 100%
+          
+    #more_container
+      height: 100px
+
 
   #page4
     background-color #9ee8a4
-
-
-
-
+    img
+      border-radius 100%
+      border 5px solid white
+      height 33vmax
+      max-height 50vmin
+      width 33vmax
+      max-width 50vmin

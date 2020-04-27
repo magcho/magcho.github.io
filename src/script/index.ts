@@ -1,11 +1,18 @@
 import Canvas from "./Canvas";
+import ItemShadow from "./ItemShadow";
 
 class MainPage {
   private canvas: Canvas;
+  private itemShadow: ItemShadow;
 
   constructor() {
     this.canvas = new Canvas();
     this.initEvent();
+
+    this.itemShadow = new ItemShadow();
+    this.itemShadow.listenEvent();
+
+    // ScrollReveal({ reset: false }).reveal(".item");
   }
 
   initEvent() {

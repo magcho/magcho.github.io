@@ -28,7 +28,7 @@ html
 					li#skils
 						a(href="#page2") SKILL
 					li#creation
-						a(href="#page3") CREATION
+						a(href="#page3") ACTIVITY
 					li#profile
 						a(href="#page4") PROFILE
 					li#contacts
@@ -71,9 +71,12 @@ html
 					#three_container2
 
 			#page3.page
-				h2 CREATION
+				h2 ACTIVITY
+				div#activity_container
+					include _creation.pug
+		
 
-			#page4.page
+			div#page4.page
 				h2 PROFILE
 
 				img(src="./img/icon.jpg")
