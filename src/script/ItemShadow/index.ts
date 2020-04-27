@@ -2,6 +2,11 @@ export default class ItemShadow {
   private windowSize;
   constructor() {
     this.updateWindowState();
+    const displayCenterPos = {
+      x: this.windowSize.center.x,
+      y: this.windowSize.center.y
+    };
+    this.eventCallback(displayCenterPos);
   }
   updateWindowState() {
     this.windowSize = {

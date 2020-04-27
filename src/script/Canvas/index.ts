@@ -403,6 +403,13 @@ export default class Cavnas {
             this.playScene("program", "skill");
           }, 1500);
         }
+      } else if (this.currentPage.page === 4) {
+        document.getElementById("icon-frame").classList.add("active");
+        document.getElementById("icon-image").classList.add("active");
+        setTimeout(() => {
+          document.getElementById("icon-image").classList.remove("active");
+          document.getElementById("icon-image").classList.add("showed");
+        }, 4000);
       }
       this.currentPage.page = 0;
     }

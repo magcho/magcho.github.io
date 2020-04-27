@@ -31,8 +31,8 @@ html
 						a(href="#page3") ACTIVITY
 					li#profile
 						a(href="#page4") PROFILE
-					li#contacts
-						a(href="#page5") CONTACTS
+					//- li#contacts
+					//- 	a(href="#page5") CONTACTS
 
 			#page2.page
 				#skill_container
@@ -50,15 +50,17 @@ html
 								li C++
 								li Python
 								li Go
+								li …
 						#electro.skillSection
 							h3 Electronics
 							p
 								| マイコン制御や基板設計など
 							ul.tools
 								li Arduino
-								li Raspberry pi
+								li RaspberryPi
 								li ESP
 								li KiCAD
+								li …
 						#pa.skillSection
 							h3 Stage Staff
 							p
@@ -68,6 +70,7 @@ html
 								li PA
 								li SoundRecording
 								li Streaming
+								li …
 					#three_container2
 
 			#page3.page
@@ -78,10 +81,22 @@ html
 
 			div#page4.page
 				h2 PROFILE
+				
+				div#icon-frame
+					img#icon-image(src="./img/icon.svg")
+				div#infomation
+					p 「SuetakeDai」magchoをハンドルネームとし、創作/開発活動を行う。
+					p ペンギンと梨が好き、あと寿司も好き。
+					p 1999年生まれ、東京電機大学に通う大学生。
+				ul#contacts-info
+					li Mail: mail@magcho.com
+					li
+						a(href="https://twitter.com/magcho0527") Twitter: @magcho0527
+					li
+						a(href="https://github.com/magcho") Github: @magcho
 
-				img(src="./img/icon.jpg")
-				p 「SuetakeDai」magchoをハンドルネームとし、創作/開発活動を行う。
-				p ペンギンと梨が好き、あと回転寿司も好き。
-				p 東京電機大学に通う大学生、2022年春に卒業予定。
-
+				footer
+					span copyright magcho
+					span
+						a(href="#") このサイトについて
 	script(src="./main.js")

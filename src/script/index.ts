@@ -1,9 +1,11 @@
 import Canvas from "./Canvas";
 import ItemShadow from "./ItemShadow";
+import Icon from "./Icon";
 
 class MainPage {
   private canvas: Canvas;
   private itemShadow: ItemShadow;
+  private icon: Icon;
 
   constructor() {
     this.canvas = new Canvas();
@@ -12,7 +14,7 @@ class MainPage {
     this.itemShadow = new ItemShadow();
     this.itemShadow.listenEvent();
 
-    // ScrollReveal({ reset: false }).reveal(".item");
+    this.icon = new Icon();
   }
 
   initEvent() {
