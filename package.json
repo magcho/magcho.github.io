@@ -34,7 +34,6 @@
     "prettier": "^2.0.4",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
-    "scrollreveal": "^4.0.6",
     "stylus": "^0.54.7",
     "ts-loader": "^6.2.2",
     "typescript": "^3.8.3",
@@ -46,6 +45,7 @@
   "dependencies": {
     "dat.gui": "^0.7.7",
     "google-fonts-plugin": "^5.0.2",
+    "markdown-it": "^10.0.0",
     "three": "^0.115.0"
   }
 }

@@ -1,0 +1,7 @@
+var activityList = [{"title":"ポートフォリオ","thumnailPath":"./img/1.png"},{"title":"モデリング","thumnailPath":"./img/pen.jpg"}]
+
+each item in activityList
+	figure(id=1).activity_item
+		img(src=item.thumbnailPath)
+figcaption
+							h3 #{item.title}

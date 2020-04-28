@@ -76,12 +76,18 @@ html
 			#page3.page
 				h2 ACTIVITY
 				div#activity_container
-					include _creation.pug
-		
+					include _activity.pug
+					each item, index in activityList
+						figure(id=`${index+1}`).activity_item
+							img(src=`${item.thumnailPath}`)
+							figcaption
+								h3 #{item.title}
+
+
 
 			div#page4.page
 				h2 PROFILE
-				
+
 				div#icon-frame
 					img#icon-image(src="./img/icon.svg")
 				div#infomation

@@ -62,6 +62,20 @@ const stylusBuild = (cb) => {
 };
 exports.stylusBuild = stylusBuild;
 
+const imgCopy = (cb) => {
+  gulp
+    .src(["./src/img/*", "./src/md/img/*"])
+    .pipe(gulp.dest(`${DEST_DIR}/img`));
+  cb();
+};
+exports.imgCopy = imgCopy;
+
+const modelCopy = (cb) => {
+  gulp.src("./src/model/*").pipe(gulp.dest(`${DEST_DIR}/model`));
+  cb();
+};
+exports.modelCopy = modelCopy;
+
 const createServer = (cb) => {
   browserSync.init({
     server: {
@@ -78,23 +92,25 @@ const watch = () => {
   };
   gulp.watch(
     "./src/**/*.ts",
-    { ignoreInitial: false },
+    { ignoreInitial: true },
     series(typescriptBuild, reload)
   );
   gulp.watch(
     "./src/**/*.pug",
-    { ignoreInitial: false },
+    { ignoreInitial: true },
     series(pugBuild, reload)
   );
   gulp.watch(
     "./src/**/*.styl",
-    { ignoreInitial: false },
+    { ignoreInitial: true },
     series(stylusBuild, reload)
   );
+  gulp.watch(["./src/img/*", "./src/md/img/*"], series(imgCopy, reload));
+  gulp.watch("./src/model/*"), series(modelCopy, reload);
 };
 exports.watch = watch;
 
 exports.default = series(
-  parallel(typescriptBuild, pugBuild, stylusBuild),
+  parallel(typescriptBuild, pugBuild, stylusBuild, imgCopy, modelCopy),
   parallel(createServer, watch)
 );
