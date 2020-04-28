@@ -24,12 +24,16 @@
   "devDependencies": {
     "@prettier/plugin-pug": "^1.2.0",
     "browser-sync": "^2.26.7",
+    "clean-css": "^4.2.3",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.1",
     "gulp-pug": "^4.0.1",
     "gulp-stylus": "^2.7.0",
+    "gulp-uglify": "^3.0.2",
     "html-webpack-plugin": "^4.2.0",
     "prettier": "^2.0.4",
     "pug": "^2.0.4",
@@ -46,6 +50,7 @@
     "dat.gui": "^0.7.7",
     "google-fonts-plugin": "^5.0.2",
     "markdown-it": "^10.0.0",
-    "three": "^0.115.0"
+    "three": "^0.115.0",
+    "uglify-js": "^3.9.1"
   }
 }

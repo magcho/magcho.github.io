@@ -11,10 +11,13 @@ const webpackStream = require("webpack-stream");
 
 // pug
 const pug = require("gulp-pug");
+const htmlmin = require("gulp-htmlmin");
+const htmlminConfig = require("./htmlmin.config");
 
 // stylus
 const stylus = require("gulp-stylus");
 const autoprefixer = require("gulp-autoprefixer");
+const cleanCSS = require("gulp-clean-css");
 
 // config
 const webpackConfig = require("./webpack.config");
@@ -38,6 +41,7 @@ const pugBuild = (cb) => {
       })
     )
     .pipe(pug({ pretty: true }))
+    .pipe(htmlmin(htmlminConfig))
     .pipe(gulp.dest(DEST_DIR));
   cb();
 };
@@ -57,6 +61,7 @@ const stylusBuild = (cb) => {
         overrideBrowserslist: "last 2 versions",
       })
     )
+    .pipe(cleanCSS())
     .pipe(gulp.dest(`${DEST_DIR}/css`));
   cb();
 };
@@ -75,6 +80,15 @@ const modelCopy = (cb) => {
   cb();
 };
 exports.modelCopy = modelCopy;
+
+const pugActivityPage = (cb) => {
+  gulp
+    .src("./src/md/*.md")
+    .pipe(htmlmin(htmlminConfig))
+    .pipe(gulp.dest(`${DEST_DIR}/activity`));
+  cb();
+};
+exports.pugActivityPage = pugActivityPage;
 
 const createServer = (cb) => {
   browserSync.init({
