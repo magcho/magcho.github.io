@@ -1,18 +1,16 @@
+![magchoの雑記](../img/blog.png)
+
 # ブログ
-
-![magchoの雑記](../img/blog.png ) 
-
 
 自分の活動や覚え書きを残すためのブログです。
 
 - Gatsby.js
 - Sass/Scss
 
-Gatsby.jsというReactベースのstatic site generatorを用いて運用しています。
+Gatsby.js という React ベースの static site generator を用いて運用しています。
 
-記事はMarkdownをGithubにpushすることで更新し、Netlifyでbuild->hostingするようにしています。メンテナンスコストが低いのでお勧めです。
+記事は Markdown を Github に push することで更新し、Netlify で build->hosting するようにしています。メンテナンスコストが低いのでお勧めです。
 
-自作のペンギンのテーマを作成しました、一部を除きダークテーマ対応しています。一部環境依存な実装にしまったので整理してテーマをpublishするつもりです。
+自作のペンギンのテーマを作成しました、一部を除きダークテーマ対応しています。一部環境依存な実装にしまったので整理してテーマを publish するつもりです。
 
-
-[magchoの雑記](https://blog.magcho.com)
+[magcho の雑記](https://blog.magcho.com)

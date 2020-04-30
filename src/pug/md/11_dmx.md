@@ -1,8 +1,8 @@
-# DMX
- 
-![gmail2slack](../img/dmx.png )
+![gmail2slack](../img/dmx.png)
 
-照明機器を操作するためのプロトコルDMXに関するツール。
+# DMX
+
+照明機器を操作するためのプロトコル DMX に関するツール。
 
 - Arduino
 - KiCAD

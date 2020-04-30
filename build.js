@@ -97,7 +97,7 @@ class Build {
       fs.writeFileSync(
         path.join(
           __dirname,
-          "./src/pug/md/generated/",
+          "./src/pug/md/--generated/",
           file.name.replace(".md", ".pug")
         ),
         outBuff

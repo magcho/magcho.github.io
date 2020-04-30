@@ -1,11 +1,11 @@
-# 負けるオセロbot
- 
-![gmail2slack](../img/othello.png )
+![gmail2slack](../img/othello.png)
 
-チーム対抗でオセロのbotを作り戦わせる課題用に作ったBot
+# 負けるオセロ bot
+
+チーム対抗でオセロの bot を作り戦わせる課題用に作った Bot
 
 - Python
 
-効率よく負けてくれるBotです。
+効率よく負けてくれる Bot です。
 
 オセロゲームの対戦ロジックは別途用意されていたのでいかに負けるかを競いました。
