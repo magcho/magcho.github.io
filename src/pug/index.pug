@@ -77,10 +77,11 @@ html
 				div#activity_container
 					include _activity.pug
 					each item, index in activityList
-						figure(id=`${index+1}`).activity_item
-							img(src=`${item.thumnailPath}`)
-							figcaption
-								h3 #{item.title}
+						a(href=`${item.href}`)
+							figure(id=`${index+1}`).activity_item
+								img(src=`${item.thumnailPath}`)
+								figcaption
+									h3 #{item.title}
 
 
 
@@ -100,8 +101,5 @@ html
 					li
 						a(href="https://github.com/magcho") Github: @magcho
 
-				footer
-					span copyright magcho
-					span
-						a(href="#") このサイトについて
+				include _footer
 	script(src="./main.js")

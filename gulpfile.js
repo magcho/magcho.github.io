@@ -34,7 +34,7 @@ exports.typescriptBuild = typescriptBuild;
 
 const pugBuild = (cb) => {
   gulp
-    .src(["./src/pug/**/*.pug"])
+    .src(["./src/pug/**/*.pug", "!./src/pug/**/_*.pug", "!./src/png/md/**/*"])
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),
@@ -49,7 +49,7 @@ exports.pugBuild = pugBuild;
 
 const stylusBuild = (cb) => {
   gulp
-    .src("./src/stylus/**/*.styl")
+    .src("./src/stylus/**/*.styl", "!./src/stylus/**/_*.styl")
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),
@@ -61,7 +61,7 @@ const stylusBuild = (cb) => {
         overrideBrowserslist: "last 2 versions",
       })
     )
-    .pipe(cleanCSS())
+    // .pipe(cleanCSS())
     .pipe(gulp.dest(`${DEST_DIR}/css`));
   cb();
 };
@@ -69,7 +69,7 @@ exports.stylusBuild = stylusBuild;
 
 const imgCopy = (cb) => {
   gulp
-    .src(["./src/img/*", "./src/md/img/*"])
+    .src(["./src/img/*.?(jpg|png|svg)", "./src/pug/md/img/*.?(jpg|png|svg)"])
     .pipe(gulp.dest(`${DEST_DIR}/img`));
   cb();
 };
@@ -83,8 +83,8 @@ exports.modelCopy = modelCopy;
 
 const pugActivityPage = (cb) => {
   gulp
-    .src("./src/md/*.md")
-    .pipe(htmlmin(htmlminConfig))
+    .src("./src/pug/md/generated/*.pug")
+    .pipe(pug())
     .pipe(gulp.dest(`${DEST_DIR}/activity`));
   cb();
 };

@@ -2,6 +2,8 @@ import Canvas from "./Canvas";
 import ItemShadow from "./ItemShadow";
 import Icon from "./Icon";
 
+import smoothscroll from "smoothscroll-polyfill";
+
 class MainPage {
   private canvas: Canvas;
   private itemShadow: ItemShadow;
@@ -87,3 +89,6 @@ class MainPage {
 }
 
 const mainPage = new MainPage();
+
+//polyfill
+smoothscroll.polyfill();

@@ -1,17 +1,18 @@
 const fs = require("fs");
 const path = require("path");
+const licenseList = require("license-list");
 
 class Build {
   fileList = [];
   currentPath = "";
 
   constructor() {
-    this.fileList = this.getFileList(path.join(__dirname, "./src/md"));
+    this.fileList = this.getFileList(path.join(__dirname, "./src/pug/md"));
   }
   do() {
     this.perseMd(this.fileList);
-    // console.log(this.fileList);
     this.createActivity();
+    this.createPostPage();
   }
 
   /*
@@ -23,11 +24,12 @@ class Build {
       .filter((fileName) => /\d{1,2}\w*\.md$/.test(fileName));
 
     return list.map((fileName) => ({
-      path: path.join(__dirname, "./src/md/", fileName),
+      path: path.join(__dirname, "./src/pug/md/", fileName),
       name: fileName,
       title: "",
       thumnailPath: "",
       markdown: "",
+      href: `./activity/${fileName.replace(".md", ".html")}`,
     }));
   }
 
@@ -58,6 +60,9 @@ class Build {
     });
   }
 
+  /*
+   * indexページのリストを生成
+   */
   createActivity() {
     const listViewBuff = [];
     this.fileList.map((file) => {
@@ -65,11 +70,9 @@ class Build {
       const item = {
         title: file.title,
         thumnailPath: file.thumnailPath,
+        href: file.href,
       };
       listViewBuff.push(item);
-
-      // file copy
-      fs.writeFileSync(file.name, file.markdown);
     });
 
     const fileBuff = `- var activityList = ${JSON.stringify(listViewBuff)}`;
@@ -77,6 +80,29 @@ class Build {
       path.join(__dirname, "./src/pug", "_activity.pug"),
       fileBuff
     );
+  }
+
+  /*
+   * 各リンク先ページのジェネレータ
+   */
+  createPostPage() {
+    const temlpalePug = fs
+      .readFileSync(path.join(__dirname, "./src/pug/_template.pug"))
+      .toString();
+
+    this.fileList.map((file) => {
+      const outBuff = temlpalePug
+        .replace("XXXXX", `../${file.name}`)
+        .replace("./img", "../img");
+      fs.writeFileSync(
+        path.join(
+          __dirname,
+          "./src/pug/md/generated/",
+          file.name.replace(".md", ".pug")
+        ),
+        outBuff
+      );
+    });
   }
 }
 
