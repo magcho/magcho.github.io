@@ -1,36 +1,65 @@
-import * as THREE from "three";
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  AnimationMixer,
+  Clock,
+  Group,
+  Plane,
+  Vector3,
+  AmbientLight,
+  SpotLight,
+  LoadingManager,
+  Mesh,
+  CircleGeometry,
+  MeshBasicMaterial,
+  sRGBEncoding,
+  AnimationClip
+} from "three";
+
+// 個別にimportするよりwebpackに任せた方がファイルサイズが小さくなったのでお任せする
+// import { WebGLRenderer } from "three/src/renderers/WebGLRenderer";
+// import { PerspectiveCamera } from "three/src/cameras/PerspectiveCamera";
+// import { Scene } from "three/src/scenes/Scene";
+// import { AnimationMixer } from "three/src/animation/AnimationMixer";
+// import { Clock } from "three/src/core/Clock";
+// import { Group } from "three/src/objects/Group";
+// import { Plane } from "three/src/math/Plane";
+// import { Vector3 } from "three/src/math/Vector3";
+// import { AmbientLight } from "three/src/lights/AmbientLight";
+// import { SpotLight } from "three/src/lights/SpotLight";
+// import { LoadingManager } from "three/src/loaders/LoadingManager";
+// import { Mesh } from "three/src/objects/Mesh";
+// import { CircleGeometry } from "three/src/geometries/CircleGeometry";
+// import { MeshBasicMaterial } from "three/src/materials/MeshBasicMaterial";
+// import { sRGBEncoding } from "three/src/constants";
+// const sRGBEncoding = 3001;
+// import { AnimationClip } from "three/src/animation/AnimationClip";
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-// import Stats from "three/examples/jsm/libs/stats.module";
+
 import Easing from "../Easing";
 import CurrentPage from "../CurrentPage";
 
 export default class Cavnas {
-  private renderer: THREE.WebGLRenderer;
-  private rendererSkill: THREE.WebGLRenderer;
-  private camera: THREE.PerspectiveCamera;
-  private cameras: THREE.PerspectiveCamera[];
-  private scene: THREE.Scene;
-  private scenes: THREE.Scene[];
-  private control: OrbitControls;
+  private renderer: WebGLRenderer;
+  private rendererSkill: WebGLRenderer;
+  private cameras: PerspectiveCamera[];
+  private scenes: Scene[];
   private controls: OrbitControls[];
-  // private stats: Stats;
 
   private stageScenes;
   private stageAnimationClips;
   private penguinAnimationClips;
   private windowSize = { w: 0, h: 0 };
   private skillAreaSize = { w: 0, h: 0 };
-  private windowScroll: number;
-  private stageAssets;
-  private animationMixers: THREE.AnimationMixer[];
-  private clock: THREE.Clock;
-  private penguinScene: THREE.Group;
-  private penguinScenes: THREE.Group[];
+  private animationMixers: AnimationMixer[];
+  private clock: Clock;
+  private penguinScenes: Group[];
 
   private currentSeneName: string;
   private animateStack: Easing[];
-  private penguinState: number; //0: hiden, 1:show
   private currentPage: CurrentPage;
 
   constructor() {
@@ -38,23 +67,6 @@ export default class Cavnas {
     this.penguinScenes = [];
     this.cameras = [];
     this.controls = [];
-    this.stageAssets = [
-      {
-        name: "pa",
-        path: "./model/stage_pa.glb",
-        animaions: []
-      },
-      {
-        name: "program",
-        path: "./model/stage_program.glb",
-        animations: []
-      },
-      {
-        name: "electro",
-        path: "./model/stage_electro.glb",
-        animatoins: ["Electro_solid"]
-      }
-    ];
 
     this.windowSize.w = window.innerWidth;
     this.windowSize.h = window.innerHeight;
@@ -66,48 +78,38 @@ export default class Cavnas {
       "three_container2"
     ).offsetWidth;
 
-    this.windowScroll = 0;
     this.animateStack = [];
     this.scenes = [];
 
     // first renderer
-    this.renderer = new THREE.WebGLRenderer({ alpha: true });
+    this.renderer = new WebGLRenderer({ alpha: true });
     this.renderer.setSize(this.windowSize.w, this.windowSize.h);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.clippingPlanes.push(
-      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-    );
-    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.clippingPlanes.push(new Plane(new Vector3(0, 1, 0), 0));
+    this.renderer.outputEncoding = sRGBEncoding;
     document
       .getElementById("three_container1")
       .appendChild(this.renderer.domElement);
 
     // second renderer
-    this.rendererSkill = new THREE.WebGLRenderer({ alpha: true });
+    this.rendererSkill = new WebGLRenderer({ alpha: true });
     this.rendererSkill.setSize(this.skillAreaSize.w, this.skillAreaSize.h);
     this.rendererSkill.setPixelRatio(window.devicePixelRatio);
     this.rendererSkill.setClearColor(0x000000, 0);
-    this.rendererSkill.clippingPlanes.push(
-      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
-    );
-    this.rendererSkill.outputEncoding = THREE.sRGBEncoding;
+    this.rendererSkill.clippingPlanes.push(new Plane(new Vector3(0, 1, 0), 0));
+    this.rendererSkill.outputEncoding = sRGBEncoding;
     document
       .getElementById("three_container2")
       .appendChild(this.rendererSkill.domElement);
 
     // init camera
     this.cameras.push(
-      new THREE.PerspectiveCamera(
-        60,
-        this.windowSize.w / this.windowSize.h,
-        0.1,
-        100
-      )
+      new PerspectiveCamera(60, this.windowSize.w / this.windowSize.h, 0.1, 100)
     );
     this.cameras[0].position.set(1.5, 1.5, 1.5);
     this.cameras.push(
-      new THREE.PerspectiveCamera(
+      new PerspectiveCamera(
         60,
         this.skillAreaSize.w / this.skillAreaSize.h,
         0.1,
@@ -117,17 +119,14 @@ export default class Cavnas {
     this.cameras[1].position.set(1.5, 1.5, 1.5);
 
     // init scene
-    this.scene = new THREE.Scene();
-    this.scenes.push(new THREE.Scene());
-    this.scenes.push(new THREE.Scene());
+    this.scenes.push(new Scene());
+    this.scenes.push(new Scene());
 
     // init control
     this.controls.push(
       new OrbitControls(this.cameras[0], this.renderer.domElement)
     );
     this.controls[0].autoRotate = true;
-    // this.control.enableRotate = false;
-    // this.control.dispose();
     this.controls[0].enableZoom = false;
     this.controls[0].target.set(0, 0.5, 0);
 
@@ -139,57 +138,48 @@ export default class Cavnas {
     this.controls[1].target.set(0, 0.5, 0);
 
     // init light
-    this.scenes[0].add(new THREE.AmbientLight(0xffffff, 0.5));
-    this.scenes[1].add(new THREE.AmbientLight(0xffffff, 0.5));
-    let spotLight = new THREE.SpotLight(0xffffff, 0.5);
+    this.scenes[0].add(new AmbientLight(0xffffff, 0.5));
+    this.scenes[1].add(new AmbientLight(0xffffff, 0.5));
+    let spotLight = new SpotLight(0xffffff, 0.5);
     spotLight.position.set(1, 4, 2);
     this.scenes[0].add(spotLight);
 
-    spotLight = new THREE.SpotLight(0xffffff, 0.5);
+    spotLight = new SpotLight(0xffffff, 0.5);
     spotLight.position.set(1, 4, 2);
     this.scenes[1].add(spotLight);
-
-    // init mesh
-    // this.scene.add(new THREE.GridHelper(10, 5));
 
     // loadModels
     this.stageScenes = {};
     this.stageAnimationClips = {};
     this.animationMixers = [];
-    this.penguinState = 0;
     this.penguinAnimationClips = [];
 
     new Promise(resolve => {
-      const loadingManager = new THREE.LoadingManager();
+      const loadingManager = new LoadingManager();
       const gtlfLoader = new GLTFLoader(loadingManager);
       loadingManager.onLoad = resolve;
 
       gtlfLoader.load("./model/penguin.glb", gltf => {
         const obj = gltf.scene;
         const animations = gltf.animations;
-        const animeMixer = new THREE.AnimationMixer(obj);
+        const animeMixer = new AnimationMixer(obj);
 
         this.penguinAnimationClips[0] = {
           idle: animeMixer.clipAction(
-            THREE.AnimationClip.findByName(animations, "Idle")
+            AnimationClip.findByName(animations, "Idle")
           ),
-          pa: animeMixer.clipAction(
-            THREE.AnimationClip.findByName(animations, "PA")
-          ),
+          pa: animeMixer.clipAction(AnimationClip.findByName(animations, "PA")),
           electro: animeMixer.clipAction(
-            THREE.AnimationClip.findByName(animations, "Electro_solid")
+            AnimationClip.findByName(animations, "Electro_solid")
           ),
           program: animeMixer.clipAction(
-            THREE.AnimationClip.findByName(animations, "Program")
+            AnimationClip.findByName(animations, "Program")
           )
         };
         this.animationMixers.push(animeMixer);
-        // this.penguinScene = obj;
-        // this.penguinScene.position.y = -1.1;
         this.penguinScenes.push(obj);
         this.penguinScenes[0].position.y = -1.1;
         this.scenes[0].add(this.penguinScenes[0]);
-        this.penguinState = 1;
 
         // resolve();
       });
@@ -197,34 +187,33 @@ export default class Cavnas {
       .then(
         () =>
           new Promise(resolve => {
-            const loadingManager = new THREE.LoadingManager();
+            const loadingManager = new LoadingManager();
             const gtlfLoader = new GLTFLoader(loadingManager);
             loadingManager.onLoad = resolve;
 
             gtlfLoader.load("./model/penguin.glb", gltf => {
               const obj = gltf.scene;
               const animations = gltf.animations;
-              const animeMixer = new THREE.AnimationMixer(obj);
+              const animeMixer = new AnimationMixer(obj);
 
               this.penguinAnimationClips[1] = {
                 idle: animeMixer.clipAction(
-                  THREE.AnimationClip.findByName(animations, "Idle")
+                  AnimationClip.findByName(animations, "Idle")
                 ),
                 pa: animeMixer.clipAction(
-                  THREE.AnimationClip.findByName(animations, "PA")
+                  AnimationClip.findByName(animations, "PA")
                 ),
                 electro: animeMixer.clipAction(
-                  THREE.AnimationClip.findByName(animations, "Electro_solid")
+                  AnimationClip.findByName(animations, "Electro_solid")
                 ),
                 program: animeMixer.clipAction(
-                  THREE.AnimationClip.findByName(animations, "Program")
+                  AnimationClip.findByName(animations, "Program")
                 )
               };
               this.animationMixers.push(animeMixer);
               this.penguinScenes.push(obj);
               this.penguinScenes[1].position.y = -1.1;
               this.scenes[1].add(this.penguinScenes[1]);
-              this.penguinState = 1;
 
               // resolve();
             });
@@ -238,24 +227,23 @@ export default class Cavnas {
           // default animation
           this.currentSeneName = "idle";
           this.penguinAnimationClips[0]["idle"].play();
-          console.log(1);
           resolve();
         });
       })
       .then(
         () =>
           new Promise(resolve => {
-            let circle = new THREE.Mesh(
-              new THREE.CircleGeometry(0.5, 32),
-              new THREE.MeshBasicMaterial({ color: 0x002255 })
+            let circle = new Mesh(
+              new CircleGeometry(0.5, 32),
+              new MeshBasicMaterial({ color: 0x002255 })
             );
             circle.rotateX(-Math.PI / 2);
             circle.position.y = 0.0001;
             this.scenes[0].add(circle);
 
-            circle = new THREE.Mesh(
-              new THREE.CircleGeometry(0.5, 32),
-              new THREE.MeshBasicMaterial({ color: 0x002255 })
+            circle = new Mesh(
+              new CircleGeometry(0.5, 32),
+              new MeshBasicMaterial({ color: 0x002255 })
             );
             circle.rotateX(-Math.PI / 2);
             circle.position.y = 0.0001;
@@ -266,20 +254,14 @@ export default class Cavnas {
       )
       .then(() => {
         return new Promise(resolve => {
-          this.clock = new THREE.Clock();
-          /* this.stats = Stats();
-          this.stats.showPanel(0);
-          document.body.appendChild(this.stats.dom); */
+          this.clock = new Clock();
           this.rendering();
-          console.log(2);
           resolve();
         });
       })
       .then(() => {
         return new Promise(resolve => {
           this.moveSceneAnimationCreate("penguin", "up", 500, "top");
-          // this.playScene("program", "skill", 0);
-          console.log(3);
           resolve();
         });
       });
@@ -287,7 +269,7 @@ export default class Cavnas {
 
   loadSingleStage(name: string, path: string): Promise<any> {
     return new Promise(resolve => {
-      const loadingManager = new THREE.LoadingManager();
+      const loadingManager = new LoadingManager();
       const loader = new GLTFLoader(loadingManager);
       loadingManager.onLoad = resolve;
 
@@ -297,10 +279,10 @@ export default class Cavnas {
 
         if (gltf.animations.length > 0) {
           const animations = gltf.animations;
-          const animeMixer = new THREE.AnimationMixer(obj);
+          const animeMixer = new AnimationMixer(obj);
 
           this.stageAnimationClips["electro"] = animeMixer.clipAction(
-            THREE.AnimationClip.findByName(animations, "Electro_solid")
+            AnimationClip.findByName(animations, "Electro_solid")
           );
           this.animationMixers.push(animeMixer);
         }
@@ -417,8 +399,6 @@ export default class Cavnas {
 
   rendering() {
     this.pageMoveAnimateManagerUpdate();
-    // console.log(this.penguinScenes[1].position.y);
-    // this.stats.begin();
     if (this.animationMixers && this.animationMixers.length > 0) {
       const delta = this.clock.getDelta();
       for (let i = 0; i < this.animationMixers.length; i++) {
@@ -433,7 +413,6 @@ export default class Cavnas {
     this.rendererSkill.render(this.scenes[1], this.cameras[1]);
     this.controls[0].update();
     this.controls[1].update();
-    // this.stats.end();
 
     requestAnimationFrame(() => {
       this.rendering();
@@ -448,7 +427,6 @@ export default class Cavnas {
     waitTime: number = 100
   ) {
     const targetNum = target === "top" ? 0 : target === "skill" ? 1 : 0;
-    console.log(targetNum);
     if (sceneName === "penguin") {
       this.animateStack.push(
         new Easing(
@@ -459,11 +437,6 @@ export default class Cavnas {
           waitTime
         )
       );
-      if (direction === "up") {
-        this.penguinState = 1;
-      } else if (direction === "down") {
-        this.penguinState = 0;
-      }
     } else {
       this.animateStack.push(
         new Easing(this.stageScenes[sceneName], sceneName, direction, duration)

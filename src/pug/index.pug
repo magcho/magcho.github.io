@@ -79,7 +79,7 @@ html
 					each item, index in activityList
 						a(href=`${item.href}`)
 							figure(id=`${index+1}`).activity_item
-								img(src=`${item.thumnailPath}`)
+								img(src=`${item.thumnailPath}` loading="lazy")
 								figcaption
 									h3 #{item.title}
 
