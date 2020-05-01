@@ -1,5 +1,6 @@
 @import "./_common"
 @import "./_activity"
+@import './_media_query.styl'
 // @import "woff2.css"
 
 
@@ -8,10 +9,6 @@
   margin 0
   padding 0
 
-
-#controls
-  position fixed
-  z-index 2
 
 #contents_container
   height 100vh //fallback
@@ -39,6 +36,8 @@
       position absolute
       bottom 0px
       padding 1rem
+      +sm()
+        padding 0
 
       li
         padding 0
@@ -51,6 +50,12 @@
         font-family: 'Oswald'
         font-weight 200
         transition 0.5s font-weight
+        +sm()
+          padding 0.2rem
+          font-size 4rem
+          height 4.4rem
+          line-height 4rem
+          font-weight unset
     
         &:hover
           font-weight 700
@@ -69,18 +74,6 @@
     *
       margin 0 auto
       display block
-   
-    // h2
-    //   margin-bottom 3rem
-    //   color black
-    //   font-size 6rem
-    //   height 6rem
-    //   line-height 6rem
-    //   width fit-content
-    //   font-family 'Oswald'
-    //   font-weight 400
-    //   display block
-
 
 
 
@@ -98,6 +91,12 @@
       font-weight 400
       display block
       color: black
+      +sm()
+        font-size 3rem
+        height 3rem
+        line-height 3rem
+        margin-bottom 2rem
+        
       &:after
         content ""
         display block
@@ -106,37 +105,47 @@
         border-bottom 2px solid black
         margin auto
 
+   
+
+
+  #page2
+    h2
+      color white
+      &:after
+        border-color white
     #skill_container
       height 100vh
       max-width 100rem
-
-      #skillArea
+      overflow-y hidden
+     
+    #skillArea
         width 50vw
         height 100vh
         margin 0
         background-color #171a1e
         float left
         padding 1rem
-        // &:hover
-        //   color white
-        //   text-fill-color white
-        //   transition 0.5s color
-
+        +sm()
+          position absolute
+          top 5vw
+          left 5vh
+          width 80vw
+          // height 80vh
+          margin auto
+          background rgba(0,0,0,.3)
+          
+    
         .skillSection
           margin-bottom 2rem
           color: #161a1e
-          // &:hover
-          //   color white
-          //   text-fill-color white
-          //   transition 0.5s color
           transition .5s text-fill-color
           &.active
             skillActiveAnime(#161a1e, #F00, white, 0.25s)
           &.playing
             -webkit-text-fill-color white
-
-
-
+          
+          
+          
         h3
           margin 0 auto
           margin-bottom .5rem
@@ -145,12 +154,12 @@
           font-family 'Oswald'
           font-weight 200
 
-
         p
-          // margin 1rem
           text-align center
           margin-left 1rem
           margin-bottom 0
+          +sm()
+            font-weight bold
 
         .tools
           display flex
@@ -158,40 +167,36 @@
           justify-content center
           margin-left 1rem
           li
-            // background-color #524a00
-            // color white
             margin-right .5rem
             margin-left 0
 
-
       #three_container2
         float left
-        width calc(50vw - 1rem)
+        width calc(50vw)
+        +sm()
+          width 100vw
         canvas
           &:focus
             outline none
 
-
-
-  #page2
-    h2
-      color white
-      &:after
-        border-color white
   #page3
     background-color #c0b9ff
-    // height unset
     overflow-y scroll
+    overflow-x hidden
 
     #activity_container
       max-width 60rem
       padding-bottom 100px
       display flex
       flex-wrap wrap
+      +sm()
+        padding-bottom 150px
       
       .activity_item
         margin-bottom 3rem
-        display block  
+        display block
+        +sm()
+          margin-botttom 1rem  
         h3
           font-weight normal
           line-height 1em
@@ -241,6 +246,8 @@
   background #c0b9ff
   padding 1rem
   padding-bottom 100px
+  +sm()
+    padding 0
   .container
     position relative
     margin 0 auto
@@ -256,14 +263,21 @@
       max-width 600px
       margin-left auto
       margin-right auto
+      +sm()
+        width calc(100vw - 1rem)
 
+    
     p
       margin-bottom 1.4rem
+      &:last-child
+        margin-bottom 0
     h1
       width 600px
       text-align left
       margin-left auto
       margin-right auto
+      +sm()
+        width calc(100vw - 1rem)
 
     ul
       width 600px
@@ -273,6 +287,8 @@
       padding .5rem 2rem
       background-color rgba(255,255,255,.3)
       margin-bottom 1.4rem
+      +sm()
+        width calc(100vw - 1rem)
       li
         list-style none
         margin-right .7rem

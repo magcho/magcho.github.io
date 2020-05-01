@@ -14,7 +14,8 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   sRGBEncoding,
-  AnimationClip
+  AnimationClip,
+  TOUCH
 } from "three";
 
 // 個別にimportするよりwebpackに任せた方がファイルサイズが小さくなったのでお任せする
@@ -128,6 +129,7 @@ export default class Cavnas {
     );
     this.controls[0].autoRotate = true;
     this.controls[0].enableZoom = false;
+    this.controls[0].enabled = false;
     this.controls[0].target.set(0, 0.5, 0);
 
     this.controls.push(
@@ -135,6 +137,7 @@ export default class Cavnas {
     );
     this.controls[1].autoRotate = true;
     this.controls[1].enableZoom = false;
+    this.controls[1].enabled = false;
     this.controls[1].target.set(0, 0.5, 0);
 
     // init light

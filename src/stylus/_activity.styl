@@ -1,6 +1,10 @@
+@import './_media_query.styl'
+
 #activity_container
   a
    width 40%
+   +sm()
+     width 45%
   .activity_item
     box-sizing border-box
     // width 40%
@@ -8,9 +12,8 @@
     background-color #c0b9ff
     padding 1rem
     color black
-     
-
-  
+    +sm()
+      padding .2rem
       
     position relative
     z-index 1

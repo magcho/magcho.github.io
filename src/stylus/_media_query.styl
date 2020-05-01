@@ -1,0 +1,57 @@
+// https://qiita.com/masterkey1009/items/80db250cd95c756c0174
+/*---------------------------------------------
+* breakpoints
+  smartphone ~ 576
+  tablet     576 ~ 992px
+  pc         992 ~ 1200px
+  wide pc    1200 ~
+*---------------------------------------------*/
+screen-sm = 768px
+screen-md = 992px
+screen-lg = 1200px
+
+
+
+
+sm()
+  @media screen and (max-width: screen-md)
+    {block}
+
+
+
+mq(type)
+  for name in type
+    if name == 'sm'
+      @media screen and (max-width: 1200px)
+        {block}
+    if name == 'pc'
+      @media screen and (min-width: 1200px)
+        {block}
+    if name == 'lg'
+      @media screen and (min-width: 1000px)
+        {block}
+    if name == 'xl'
+      @media screen and (min-width: 1200px)
+        {block}
+
+
+breakpoint(bpName)
+    for name in bpName
+        if name == 'sm'
+            @media only screen and (min-width: screen-sm)
+                {block}
+        if name == 'md'
+            @media only screen and (min-width: screen-md)
+                {block}
+        if name == 'lg'
+            @media only screen and (min-width: screen-lg)
+                {block}
+        if name == 'sm-up'
+            @media only screen and (max-width: screen-sm)
+                {block}
+        if name == 'md-up'
+            @media only screen and (max-width: screen-md)
+                {block}
+        if name == 'lg-up'
+            @media only screen and (max-width: screen-lg)
+                {block}
