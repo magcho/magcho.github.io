@@ -38,7 +38,6 @@ isProduction = options.env === "production" ? true : false;
 if (isProduction) {
   webpackConfig.mode = "production";
 }
-
 const typescriptBuild = function (cb) {
   return webpackStream(webpackConfig, webpak)
     .on("error", function (e) {
@@ -50,7 +49,7 @@ exports.typescriptBuild = typescriptBuild;
 
 const pugBuild = (cb) => {
   gulp
-    .src(["./src/pug/**/[!_]*.pug", "!/src/png/md/**/*.*"])
+    .src(["./src/pug/[!_]*.pug"])
     .pipe(
       plumber({
         errorHandler: notify.onError("<%= error.message %>"),
@@ -156,7 +155,7 @@ const watch = () => {
 };
 exports.watch = watch;
 
-exports.server = series(createServer, watch);
+gulp.task("server", createServer);
 
 exports.default = series(
   parallel(typescriptBuild, pugBuild, stylusBuild, imgCopy, modelCopy),

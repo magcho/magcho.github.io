@@ -4,11 +4,16 @@
 // @import "woff2.css"
 
 
+
+*, *:before, *:after
+  backface-visivility inherit
 *
   box-sizing border-box
   margin 0
   padding 0
 
+html
+  backface-visivility hidden
 
 #contents_container
   height 100vh //fallback

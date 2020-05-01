@@ -4,3 +4,4 @@ build:
 
 clean:
 	rm -rf ./dist
+	rm -f ./src/pug/md/--generated/*.pug
