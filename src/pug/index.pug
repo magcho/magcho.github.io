@@ -1,6 +1,8 @@
 doctype html
 html
-	head(prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#")
+	head(
+		prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+	)
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width")
 		title magcho's portfolio
@@ -21,9 +23,9 @@ html
 		//- 	button#penguin_out1 pen_out1
 		//- 	button#penguin_in2 pen_in2
 		//- 	button#penguin_out2 pen_out2
-		div#loading_screen
-			div.content
-				div#loading_animation
+		#loading_screen
+			.content
+				#loading_animation
 					img(src="./img/pen.svg")
 				p Now Loading...
 
@@ -81,23 +83,26 @@ html
 
 			#page3.page
 				h2 ACTIVITY
-				div#activity_container
-					include _activity.pug
+				#activity_container
+					include ./md/--generated/_activity.pug
 					each item, index in activityList
 						a(href=`${item.href}`)
-							figure(id=`${index+1}`).activity_item
-								img(src=`${item.thumnailPath}` loading="lazy")
+							figure.activity_item(id=`${index + 1}`)
+								img(
+									src=`${item.thumnailPath}`,
+									loading="lazy",
+									width="920",
+									height="517"
+								)
 								figcaption
 									h3 #{item.title}
 
-
-
-			div#page4.page
+			#page4.page
 				h2 PROFILE
 
-				div#icon-frame
+				#icon-frame
 					img#icon-image(src="./img/icon.svg")
-				div#infomation
+				#infomation
 					p 「SuetakeDai」magchoをハンドルネームとし、創作/開発活動を行う。
 					p ペンギンと梨が好き、あと寿司も好き。
 					p 1999年生まれ、東京電機大学に通う大学生。

@@ -77,7 +77,7 @@ class Build {
 
     const fileBuff = `- var activityList = ${JSON.stringify(listViewBuff)}`;
     fs.writeFileSync(
-      path.join(__dirname, "./src/pug", "_activity.pug"),
+      path.join(__dirname, "./src/pug/md/--generated", "_activity.pug"),
       fileBuff
     );
   }

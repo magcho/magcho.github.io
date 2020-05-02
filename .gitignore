@@ -1,6 +1,6 @@
 
---generated/*
-
+--generated/
+src/pug/_activity.pug
 # Created by https://www.gitignore.io/api/node
 # Edit at https://www.gitignore.io/?templates=node
 
