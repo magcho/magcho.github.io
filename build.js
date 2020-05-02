@@ -106,5 +106,7 @@ class Build {
   }
 }
 
+console.log("build.js start");
 const build = new Build();
 build.do();
+console.log("build.js finish");

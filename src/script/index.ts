@@ -10,7 +10,7 @@ class MainPage {
   private icon: Icon;
 
   constructor() {
-    this.canvas = new Canvas();
+    this.canvas = new Canvas(document.getElementById("loading_screen"));
     this.initEvent();
 
     this.itemShadow = new ItemShadow();
