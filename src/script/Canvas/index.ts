@@ -14,8 +14,7 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   sRGBEncoding,
-  AnimationClip,
-  TOUCH
+  AnimationClip
 } from "three";
 
 // 個別にimportするよりwebpackに任せた方がファイルサイズが小さくなったのでお任せする
@@ -157,74 +156,81 @@ export default class Cavnas {
     this.animationMixers = [];
     this.penguinAnimationClips = [];
 
-    new Promise(resolve => {
-      const loadingManager = new LoadingManager();
-      const gtlfLoader = new GLTFLoader(loadingManager);
-      loadingManager.onLoad = resolve;
+    Promise.all([
+      new Promise(resolve => {
+        // loading pengin model for top
+        console.log("start load penguin1");
 
-      gtlfLoader.load("./model/penguin.glb", gltf => {
-        const obj = gltf.scene;
-        const animations = gltf.animations;
-        const animeMixer = new AnimationMixer(obj);
+        const loadingManager = new LoadingManager();
+        loadingManager.onLoad = resolve;
+        const gtlfLoader = new GLTFLoader(loadingManager);
 
-        this.penguinAnimationClips[0] = {
-          idle: animeMixer.clipAction(
-            AnimationClip.findByName(animations, "Idle")
-          ),
-          pa: animeMixer.clipAction(AnimationClip.findByName(animations, "PA")),
-          electro: animeMixer.clipAction(
-            AnimationClip.findByName(animations, "Electro_solid")
-          ),
-          program: animeMixer.clipAction(
-            AnimationClip.findByName(animations, "Program")
-          )
-        };
-        this.animationMixers.push(animeMixer);
-        this.penguinScenes.push(obj);
-        this.penguinScenes[0].position.y = -1.1;
-        this.scenes[0].add(this.penguinScenes[0]);
+        gtlfLoader.load("./model/penguin.glb", gltf => {
+          const obj = gltf.scene;
+          const animations = gltf.animations;
+          const animeMixer = new AnimationMixer(obj);
 
-        // resolve();
-      });
-    })
-      .then(
-        () =>
-          new Promise(resolve => {
-            const loadingManager = new LoadingManager();
-            const gtlfLoader = new GLTFLoader(loadingManager);
-            loadingManager.onLoad = resolve;
+          this.penguinAnimationClips[0] = {
+            idle: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Idle")
+            ),
+            pa: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "PA")
+            ),
+            electro: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Electro_solid")
+            ),
+            program: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Program")
+            )
+          };
+          this.animationMixers.push(animeMixer);
+          this.penguinScenes[0] = obj;
+          this.penguinScenes[0].position.y = -1.1;
+          this.scenes[0].add(this.penguinScenes[0]);
+          console.log("finish load penguin1");
+          // resolve();
+        });
+      }),
+      new Promise(resolve => {
+        console.log("start load penguin2");
+        // loading pengin model for skill
+        const loadingManager = new LoadingManager();
+        loadingManager.onLoad = resolve;
+        const gtlfLoader = new GLTFLoader(loadingManager);
 
-            gtlfLoader.load("./model/penguin.glb", gltf => {
-              const obj = gltf.scene;
-              const animations = gltf.animations;
-              const animeMixer = new AnimationMixer(obj);
+        gtlfLoader.load("./model/penguin.glb", gltf => {
+          const obj = gltf.scene;
+          const animations = gltf.animations;
+          const animeMixer = new AnimationMixer(obj);
 
-              this.penguinAnimationClips[1] = {
-                idle: animeMixer.clipAction(
-                  AnimationClip.findByName(animations, "Idle")
-                ),
-                pa: animeMixer.clipAction(
-                  AnimationClip.findByName(animations, "PA")
-                ),
-                electro: animeMixer.clipAction(
-                  AnimationClip.findByName(animations, "Electro_solid")
-                ),
-                program: animeMixer.clipAction(
-                  AnimationClip.findByName(animations, "Program")
-                )
-              };
-              this.animationMixers.push(animeMixer);
-              this.penguinScenes.push(obj);
-              this.penguinScenes[1].position.y = -1.1;
-              this.scenes[1].add(this.penguinScenes[1]);
+          this.penguinAnimationClips[1] = {
+            idle: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Idle")
+            ),
+            pa: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "PA")
+            ),
+            electro: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Electro_solid")
+            ),
+            program: animeMixer.clipAction(
+              AnimationClip.findByName(animations, "Program")
+            )
+          };
+          this.animationMixers.push(animeMixer);
+          this.penguinScenes[1] = obj;
+          this.penguinScenes[1].position.y = -1.1;
+          this.scenes[1].add(this.penguinScenes[1]);
 
-              // resolve();
-            });
-          })
-      )
-      .then(() => this.loadSingleStage("pa", "./model/stage_pa.glb"))
-      .then(() => this.loadSingleStage("program", "./model/stage_program.glb"))
-      .then(() => this.loadSingleStage("electro", "./model/stage_electro.glb"))
+          // resolve();
+          console.log("finish load penguin2");
+        });
+      }),
+      this.loadSingleStage("pa", "./model/stage_pa.glb"),
+      this.loadSingleStage("program", "./model/stage_program.glb"),
+      this.loadSingleStage("electro", "./model/stage_electro.glb")
+    ])
       .then(() => {
         return new Promise(resolve => {
           // default animation
@@ -272,9 +278,10 @@ export default class Cavnas {
 
   loadSingleStage(name: string, path: string): Promise<any> {
     return new Promise(resolve => {
+      console.log(`start ${name} stage load`);
       const loadingManager = new LoadingManager();
-      const loader = new GLTFLoader(loadingManager);
       loadingManager.onLoad = resolve;
+      const loader = new GLTFLoader(loadingManager);
 
       loader.load(path, gltf => {
         const obj = gltf.scene;
@@ -289,6 +296,7 @@ export default class Cavnas {
           );
           this.animationMixers.push(animeMixer);
         }
+        console.log(`finish ${name} stage load`);
         // resolve();
       });
     });

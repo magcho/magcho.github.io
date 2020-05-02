@@ -69,18 +69,6 @@ class MainPage {
     });
   }
 
-  private getCurrentPage(pageNum: number = 4): number {
-    const windowHeight = window.innerHeight;
-
-    for (let i = 1; i <= pageNum; i++) {
-      const topPos = document.getElementById(`page${i}`).getBoundingClientRect()
-        .top;
-      if (0 <= topPos && topPos < windowHeight * i) {
-        return i;
-      }
-    }
-  }
-
   private allSkillSectionDisActive() {
     Array.from(document.getElementsByClassName("skillSection")).map(ele => {
       ele.classList.remove("playing");
