@@ -111,6 +111,14 @@ const modelCopy = (cb) => {
 };
 exports.modelCopy = modelCopy;
 
+const assetsCopy = (cb) => {
+  gulp
+    .src("./assets/**/*")
+    .pipe(gulp.dest(`${DEST_DIR}/`))
+    .on("end", cb);
+};
+exports.assetsCopy = assetsCopy;
+
 const pugActivityPageBuild = (cb) => {
   gulp
     .src("./src/pug/md/--generated/[!_]*.pug")
@@ -152,13 +160,21 @@ const watch = () => {
   );
   gulp.watch(["./src/img/*", "./src/pug/md/img/*"], series(imgCopy, reload));
   gulp.watch("./src/model/*"), series(modelCopy, reload);
+  gulp.watch("./assets/**/*", series(assetsCopy, reload));
 };
 exports.watch = watch;
 
 gulp.task("server", createServer);
 
 exports.default = series(
-  parallel(typescriptBuild, pugBuild, stylusBuild, imgCopy, modelCopy),
+  parallel(
+    typescriptBuild,
+    pugBuild,
+    stylusBuild,
+    imgCopy,
+    modelCopy,
+    assetsCopy
+  ),
   parallel(createServer, watch)
 );
 
@@ -170,6 +186,7 @@ gulp.task(
     pugActivityPageBuild,
     stylusBuild,
     modelCopy,
-    imgCopy
+    imgCopy,
+    assetsCopy
   )
 );

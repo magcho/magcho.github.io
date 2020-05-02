@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "make clean && node ./build.js && gulp build --env production",
     "watch": "webpack -w",
     "dev": "webpack-dev-server",
     "format": "prettier -w ./src/**/*.ts"
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/magcho/magcho.github.io#readme",
   "devDependencies": {
+    "@prettier/plugin-pug": "^1.2.0",
     "browser-sync": "^2.26.7",
     "clean-css": "^4.2.3",
     "gulp": "^4.0.2",
