@@ -61,8 +61,10 @@ export default class Cavnas {
   private currentSeneName: string;
   private animateStack: Easing[];
   private currentPage: CurrentPage;
+  private loadingScreenElem: Element;
 
-  constructor() {
+  constructor(loadingScreenElem: Element) {
+    this.loadingScreenElem = loadingScreenElem;
     this.currentPage = new CurrentPage();
     this.penguinScenes = [];
     this.cameras = [];
@@ -257,7 +259,6 @@ export default class Cavnas {
             circle.rotateX(-Math.PI / 2);
             circle.position.y = 0.0001;
             this.scenes[1].add(circle);
-
             resolve();
           })
       )
@@ -270,7 +271,10 @@ export default class Cavnas {
       })
       .then(() => {
         return new Promise(resolve => {
-          this.moveSceneAnimationCreate("penguin", "up", 500, "top");
+          this.loadingScreenElem.classList.add("loaded");
+          this.loadingScreenElem.addEventListener("transitionend", e => {
+            this.moveSceneAnimationCreate("penguin", "up", 500, "top");
+          });
           resolve();
         });
       });

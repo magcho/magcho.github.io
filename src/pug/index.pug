@@ -1,10 +1,11 @@
 doctype html
 html
-	head
+	head(prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#")
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width")
-		title threejs
+		title magcho's portfolio
 		link(rel="stylesheet", href="./main.css")
+		include _helmet
 		script
 			| let vh = window.innerHeight * 0.01;document.documentElement.style.setProperty('--vh', `${vh}px`);
 
@@ -20,6 +21,12 @@ html
 		//- 	button#penguin_out1 pen_out1
 		//- 	button#penguin_in2 pen_in2
 		//- 	button#penguin_out2 pen_out2
+		div#loading_screen
+			div.content
+				div#loading_animation
+					img(src="./img/pen.svg")
+				p Now Loading...
+
 		#contents_container
 			#page1.page
 				#three_container1
