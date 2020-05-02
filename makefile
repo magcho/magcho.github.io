@@ -3,5 +3,5 @@ build:
 	gulp build --env production
 
 clean:
-	rm -rf ./dist
-	rm -f ./src/pug/md/--generated/*.pug
+	rm -f ./dist/*.*
+	rm -f ./src/pug/_generated/*.*

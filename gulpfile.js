@@ -23,7 +23,7 @@ const cleanCSS = require("gulp-clean-css");
 
 // image
 const imagemin = require("gulp-imagemin");
-const imageResize = require("gulp-image-resize"); // require imagemagic, graphicsmagick
+const gulpSharp = require("./gulp-sharp");
 
 // config
 const webpackConfig = require("./webpack.config");
@@ -86,16 +86,7 @@ const imgCopy = (cb) => {
   gulp
     .src(["./src/img/*.+(jpg|png|svg)", "./src/pug/md/img/*.+(jpg|png|svg)"])
     .pipe(
-      gulpif(
-        isProduction,
-        gulpif(
-          "*.+(jpg|png)",
-          imageResize({
-            width: 920,
-            height: 0,
-          })
-        )
-      )
+      gulpif(isProduction, gulpif("*.+(jpg|png)", gulpSharp({ width: 960 })))
     )
     .pipe(gulpif(isProduction, imagemin()))
     .pipe(gulp.dest(`${DEST_DIR}/img`))
@@ -121,7 +112,7 @@ exports.assetsCopy = assetsCopy;
 
 const pugActivityPageBuild = (cb) => {
   gulp
-    .src("./src/pug/md/--generated/[!_]*.pug")
+    .src("./src/pug/_generated/[!_]*.pug")
     .pipe(pug({ pretty: !isProduction }))
     .pipe(gulpif(isProduction, htmlmin(htmlminConfig)))
     .pipe(gulp.dest(`${DEST_DIR}/activity`))

@@ -161,8 +161,6 @@ export default class Cavnas {
     Promise.all([
       new Promise(resolve => {
         // loading pengin model for top
-        console.log("start load penguin1");
-
         const loadingManager = new LoadingManager();
         loadingManager.onLoad = resolve;
         const gtlfLoader = new GLTFLoader(loadingManager);
@@ -190,12 +188,10 @@ export default class Cavnas {
           this.penguinScenes[0] = obj;
           this.penguinScenes[0].position.y = -1.1;
           this.scenes[0].add(this.penguinScenes[0]);
-          console.log("finish load penguin1");
           // resolve();
         });
       }),
       new Promise(resolve => {
-        console.log("start load penguin2");
         // loading pengin model for skill
         const loadingManager = new LoadingManager();
         loadingManager.onLoad = resolve;
@@ -226,7 +222,6 @@ export default class Cavnas {
           this.scenes[1].add(this.penguinScenes[1]);
 
           // resolve();
-          console.log("finish load penguin2");
         });
       }),
       this.loadSingleStage("pa", "./model/stage_pa.glb"),
@@ -282,7 +277,6 @@ export default class Cavnas {
 
   loadSingleStage(name: string, path: string): Promise<any> {
     return new Promise(resolve => {
-      console.log(`start ${name} stage load`);
       const loadingManager = new LoadingManager();
       loadingManager.onLoad = resolve;
       const loader = new GLTFLoader(loadingManager);
@@ -300,7 +294,6 @@ export default class Cavnas {
           );
           this.animationMixers.push(animeMixer);
         }
-        console.log(`finish ${name} stage load`);
         // resolve();
       });
     });
