@@ -1,9 +1,6 @@
-name: deploy to netlify
+name: preview to netlify
 
-on:
-  push:
-    branches:
-    - master
+on: pull_request
 
 jobs:
   build:
@@ -33,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: deploy
-        run: npx netlify-cli deploy --dir=./dist --prod
+        run: npx netlify-cli deploy --dir=./dist
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }} 
