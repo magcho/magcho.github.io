@@ -1,15 +1,9 @@
 # magcho's portfolio
 
-![screen shot](./src/md/img/pf.png)
+![screen shot](./src/pug/md/img/pf.png)
 
-
-Production
-![](https://github.com/magcho/magcho.github.io/workflows/deploy/badge.svg)
-
-
-Preview
-![](https://github.com/magcho/magcho.github.io/workflows/preview/badge.svg)
-
+![deploy to netlify](https://github.com/magcho/magcho.github.io/workflows/deploy%20to%20netlify/badge.svg)
+![preview to netlify](https://github.com/magcho/magcho.github.io/workflows/preview%20to%20netlify/badge.svg)
 
 ## local build
 
