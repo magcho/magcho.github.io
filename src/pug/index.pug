@@ -84,9 +84,9 @@ html
 			#page3.page
 				h2 ACTIVITY
 				#activity_container
-					include ./md/--generated/_activity.pug
+					include ./_generated/_activity.pug
 					each item, index in activityList
-						a(href=`${item.href}`)
+						a(href=`${item.href}`, target="_blank")
 							figure.activity_item(id=`${index + 1}`)
 								img(
 									src=`${item.thumnailPath}`,

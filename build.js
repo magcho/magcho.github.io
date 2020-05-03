@@ -1,108 +1,108 @@
 const fs = require("fs");
 const path = require("path");
-const licenseList = require("license-list");
+// const licenseList = require("lilist");
 
 class Build {
   fileList = [];
   currentPath = "";
 
-  constructor() {
-    this.fileList = this.getFileList(path.join(__dirname, "./src/pug/md"));
-  }
-  do() {
-    this.perseMd(this.fileList);
-    this.createActivity();
-    this.createPostPage();
-  }
-
   /*
    * src/md/ディレクトリ下のファイル名一覧を取得
    */
-  getFileList(targetDirPath) {
-    const list = fs
-      .readdirSync(targetDirPath)
-      .filter((fileName) => /\d{1,2}\w*\.md$/.test(fileName));
+  do() {
+    Promise.resolve()
+      .then(
+        () =>
+          new Promise((resolve) => {
+            const fileList = fs
+              .readdirSync(path.join(`./src/pug/md`))
+              .filter((fileName) => /\d{1,2}\w*\.md$/.test(fileName))
+              .map((fileName) => ({
+                path: path.join(__dirname, "./src/pug/md/", fileName),
+                name: fileName,
+                title: "",
+                thumnailPath: "",
+                markdown: "",
+                href: `./activity/${fileName.replace(".md", ".html")}`,
+              }));
+            resolve(fileList);
+          })
+      )
+      .then(
+        (fileList) =>
+          new Promise((resolve) => {
+            const fileListFilled = fileList.map((file) => {
+              const fBuff = fs.readFileSync(file.path);
 
-    return list.map((fileName) => ({
-      path: path.join(__dirname, "./src/pug/md/", fileName),
-      name: fileName,
-      title: "",
-      thumnailPath: "",
-      markdown: "",
-      href: `./activity/${fileName.replace(".md", ".html")}`,
-    }));
-  }
+              fBuff
+                .toString()
+                .split("\n")
+                .map((line) => {
+                  if (/^\s*#\s+.+$/.test(line)) {
+                    file.title = line.replace(/^#\s/, "");
+                  }
+                  if (/^\s*!\[.*\]\(.*\)\s*$/.test(line)) {
+                    file.thumnailPath = line
+                      .replace(/^\s*!\[.*\]/, "")
+                      .replace("(", "")
+                      .replace(")", "")
+                      .replace(/\s*/g, "");
+                  }
+                  file.markdown = fBuff;
+                });
+              return file;
+            });
+            resolve(fileListFilled);
+          })
+      )
+      .then(
+        (fileList) =>
+          new Promise((resolve) => {
+            const listViewBuff = [];
+            fileList.map((file) => {
+              // list buff
+              const item = {
+                title: file.title,
+                thumnailPath: file.thumnailPath,
+                href: file.href,
+              };
+              listViewBuff.push(item);
+            });
+            const fileBuff = `- var activityList = ${JSON.stringify(
+              listViewBuff
+            )}`;
+            fs.writeFile(
+              path.join(__dirname, "./src/pug/_generated", "_activity.pug"),
+              fileBuff,
+              () => {
+                resolve(fileList);
+              }
+            );
+          })
+      )
+      .then(
+        (fileList) =>
+          new Promise((resolve) => {
+            const temlpalePug = fs
+              .readFileSync(path.join(__dirname, "./src/pug/_template.pug"))
+              .toString();
 
-  /*
-   * markdownから各種情報を取得
-   */
-  perseMd(fileList) {
-    this.fileList = fileList.map((file) => {
-      const stream = fs.readFileSync(file.path);
-
-      stream
-        .toString()
-        .split("\n")
-        .map((line) => {
-          if (/^\s*#\s+.+$/.test(line)) {
-            file.title = line.replace(/^#\s/, "");
-          }
-          if (/^\s*!\[.*\]\(.*\)\s*$/.test(line)) {
-            file.thumnailPath = line
-              .replace(/^\s*!\[.*\]/, "")
-              .replace("(", "")
-              .replace(")", "")
-              .replace(/\s*/g, "");
-          }
-          file.markdown = stream;
-        });
-      return file;
-    });
-  }
-
-  /*
-   * indexページのリストを生成
-   */
-  createActivity() {
-    const listViewBuff = [];
-    this.fileList.map((file) => {
-      // list buff
-      const item = {
-        title: file.title,
-        thumnailPath: file.thumnailPath,
-        href: file.href,
-      };
-      listViewBuff.push(item);
-    });
-
-    const fileBuff = `- var activityList = ${JSON.stringify(listViewBuff)}`;
-    fs.writeFileSync(
-      path.join(__dirname, "./src/pug/md/--generated", "_activity.pug"),
-      fileBuff
-    );
-  }
-
-  /*
-   * 各リンク先ページのジェネレータ
-   */
-  createPostPage() {
-    const temlpalePug = fs
-      .readFileSync(path.join(__dirname, "./src/pug/_template.pug"))
-      .toString();
-
-    this.fileList.map((file) => {
-      const outBuff = temlpalePug
-        .replace("XXXXX", `../${file.name}`)
-        .replace("./img", "../img");
-      fs.writeFileSync(
-        path.join(
-          __dirname,
-          "./src/pug/md/--generated/",
-          file.name.replace(".md", ".pug")
-        ),
-        outBuff
+            fileList.map((file) => {
+              const outBuff = temlpalePug
+                .replace("XXXXX", `../md/${file.name}`)
+                .replace("./img", "../img");
+              fs.writeFileSync(
+                path.join(
+                  __dirname,
+                  "./src/pug/_generated/",
+                  file.name.replace(".md", ".pug")
+                ),
+                outBuff
+              );
+            });
+            resolve();
+          })
       );
-    });
   }
 }
 
