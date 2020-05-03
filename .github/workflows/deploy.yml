@@ -2,7 +2,8 @@ name: deploy to netlify
 
 on:
   push:
-    master
+    branches:
+    - master
 
 jobs:
   build:
