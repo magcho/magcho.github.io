@@ -23,7 +23,7 @@
   "homepage": "https://github.com/magcho/magcho.github.io#readme",
   "devDependencies": {
     "@prettier/plugin-pug": "^1.2.0",
-    "browser-sync": "^2.26.7",
+    "browser-sync": "^2.26.13",
     "clean-css": "^4.2.3",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
@@ -50,7 +50,7 @@
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3",
+    "webpack-dev-server": "^3.11.0",
     "webpack-stream": "^5.2.1"
   },
   "dependencies": {
