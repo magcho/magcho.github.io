@@ -14,7 +14,7 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   sRGBEncoding,
-  AnimationClip
+  AnimationClip,
 } from "three";
 
 // 個別にimportするよりwebpackに任せた方がファイルサイズが小さくなったのでお任せする
@@ -159,13 +159,13 @@ export default class Cavnas {
     this.penguinAnimationClips = [];
 
     Promise.all([
-      new Promise(resolve => {
+      new Promise((resolve) => {
         // loading pengin model for top
         const loadingManager = new LoadingManager();
         loadingManager.onLoad = resolve;
         const gtlfLoader = new GLTFLoader(loadingManager);
 
-        gtlfLoader.load("./model/penguin.glb", gltf => {
+        gtlfLoader.load("./model/penguin.glb", (gltf) => {
           const obj = gltf.scene;
           const animations = gltf.animations;
           const animeMixer = new AnimationMixer(obj);
@@ -182,7 +182,7 @@ export default class Cavnas {
             ),
             program: animeMixer.clipAction(
               AnimationClip.findByName(animations, "Program")
-            )
+            ),
           };
           this.animationMixers.push(animeMixer);
           this.penguinScenes[0] = obj;
@@ -191,13 +191,13 @@ export default class Cavnas {
           // resolve();
         });
       }),
-      new Promise(resolve => {
+      new Promise((resolve) => {
         // loading pengin model for skill
         const loadingManager = new LoadingManager();
         loadingManager.onLoad = resolve;
         const gtlfLoader = new GLTFLoader(loadingManager);
 
-        gtlfLoader.load("./model/penguin.glb", gltf => {
+        gtlfLoader.load("./model/penguin.glb", (gltf) => {
           const obj = gltf.scene;
           const animations = gltf.animations;
           const animeMixer = new AnimationMixer(obj);
@@ -214,7 +214,7 @@ export default class Cavnas {
             ),
             program: animeMixer.clipAction(
               AnimationClip.findByName(animations, "Program")
-            )
+            ),
           };
           this.animationMixers.push(animeMixer);
           this.penguinScenes[1] = obj;
@@ -226,10 +226,10 @@ export default class Cavnas {
       }),
       this.loadSingleStage("pa", "./model/stage_pa.glb"),
       this.loadSingleStage("program", "./model/stage_program.glb"),
-      this.loadSingleStage("electro", "./model/stage_electro.glb")
+      this.loadSingleStage("electro", "./model/stage_electro.glb"),
     ])
       .then(() => {
-        return new Promise(resolve => {
+        return new Promise<void>((resolve) => {
           // default animation
           this.currentSeneName = "idle";
           this.penguinAnimationClips[0]["idle"].play();
@@ -238,7 +238,7 @@ export default class Cavnas {
       })
       .then(
         () =>
-          new Promise(resolve => {
+          new Promise<void>((resolve) => {
             let circle = new Mesh(
               new CircleGeometry(0.5, 32),
               new MeshBasicMaterial({ color: 0x002255 })
@@ -258,16 +258,16 @@ export default class Cavnas {
           })
       )
       .then(() => {
-        return new Promise(resolve => {
+        return new Promise<void>((resolve) => {
           this.clock = new Clock();
           this.rendering();
           resolve();
         });
       })
       .then(() => {
-        return new Promise(resolve => {
+        return new Promise<void>((resolve) => {
           this.loadingScreenElem.classList.add("loaded");
-          this.loadingScreenElem.addEventListener("transitionend", e => {
+          this.loadingScreenElem.addEventListener("transitionend", (e) => {
             this.moveSceneAnimationCreate("penguin", "up", 500, "top");
           });
           resolve();
@@ -276,12 +276,12 @@ export default class Cavnas {
   }
 
   loadSingleStage(name: string, path: string): Promise<any> {
-    return new Promise(resolve => {
+    return new Promise<void>((resolve) => {
       const loadingManager = new LoadingManager();
       loadingManager.onLoad = resolve;
       const loader = new GLTFLoader(loadingManager);
 
-      loader.load(path, gltf => {
+      loader.load(path, (gltf) => {
         const obj = gltf.scene;
         this.stageScenes[name] = obj;
 
@@ -307,7 +307,7 @@ export default class Cavnas {
     target: string = "top",
     duration = 0.5
   ) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const targetNum = target === "top" ? 0 : target == "skill" ? 1 : 0;
 
       if (nextSceneName !== "idle") {
@@ -333,7 +333,7 @@ export default class Cavnas {
     target: string = "top",
     duration: number = 0.5
   ) {
-    return new Promise(resolve => {
+    return new Promise<void>((resolve) => {
       const targetNum = target === "top" ? 0 : target == "skill" ? 1 : 0;
       if (animationName !== "idle") {
         this.moveSceneAnimationCreate(
@@ -384,9 +384,11 @@ export default class Cavnas {
     } else if (this.currentPage.isPageMoveEnd()) {
       if (this.currentPage.page === 2) {
         this.moveSceneAnimationCreate("penguin", "up", 500, "skill", 0);
-        Array.from(document.getElementsByClassName("skillSection")).map(ele => {
-          ele.classList.add("active");
-        });
+        Array.from(document.getElementsByClassName("skillSection")).map(
+          (ele) => {
+            ele.classList.add("active");
+          }
+        );
         if (this.currentSeneName === "idle") {
           setTimeout(() => {
             document.getElementById("program").classList.add("playing");
@@ -456,7 +458,7 @@ export default class Cavnas {
     if (this.animateStack.length === 0) {
       return;
     }
-    this.animateStack = this.animateStack.filter(anime => {
+    this.animateStack = this.animateStack.filter((anime) => {
       return anime.update();
     });
   }
