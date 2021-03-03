@@ -57,7 +57,7 @@
     "markdown-it": "^10.0.0",
     "sharp": "^0.25.2",
     "smoothscroll-polyfill": "^0.4.4",
-    "three": "^0.116.1",
+    "three": "^0.125.0",
     "uglify-js": "^3.9.1"
   }
 }
