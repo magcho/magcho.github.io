@@ -70,7 +70,7 @@ class MainPage {
   }
 
   private allSkillSectionDisActive() {
-    Array.from(document.getElementsByClassName("skillSection")).map(ele => {
+    Array.from(document.getElementsByClassName("skillSection")).map((ele) => {
       ele.classList.remove("playing");
     });
   }
