@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "magchoのポートフォリオ",
   "main": "index.js",
-  "private": true,
   "scripts": {
     "build": "make clean && node ./build.js && gulp build --env production",
     "watch": "webpack -w",
